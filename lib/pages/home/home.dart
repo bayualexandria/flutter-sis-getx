@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:get/get.dart';
+import 'package:sis/utils/repositories/reporitories.dart';
 import '../../controllers/users/user_controller.dart';
 import 'package:heroicons/heroicons.dart';
 
@@ -57,6 +58,7 @@ class _HomeState extends State<Home> {
   int _current = 0;
   final CarouselController _controller = CarouselController();
   final userController = Get.put(UserController());
+  final repositori = APIEndPoints().baseUrlImage;
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -82,7 +84,7 @@ class _HomeState extends State<Home> {
                   future: userController.user(),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      final imageUrl = snapshot.data['image_profile'];
+                      final imageUrl = snapshot.data['siswa']['image_profile'];
                       return Container(
                         padding: const EdgeInsets.only(
                           top: 10,
@@ -115,14 +117,14 @@ class _HomeState extends State<Home> {
                                   child: CircleAvatar(
                                     backgroundImage: NetworkImage(
                                       imageUrl != null
-                                          ? 'http://192.168.1.6:8000/storage/$imageUrl'
+                                          ? '$repositori$imageUrl'
                                           : 'https://kemahasiswaan.umpp.ac.id/upload/default.png',
                                     ),
                                     radius: 24,
                                   ),
                                 ),
                                 Text(
-                                  snapshot.data['nama'],
+                                  snapshot.data['siswa']['nama'] ?? '',
                                   style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 10,

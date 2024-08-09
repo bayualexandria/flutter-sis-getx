@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import '../auth/authentication.dart';
@@ -14,7 +15,7 @@ class UserController extends GetxController {
     final token = await storage.read(key: 'token');
     final noInduk = await storage.read(key: 'username');
     try {
-      final response = await dio.get('$repositori/siswa/$noInduk',
+      final response = await dio.get('$repositori/user/$noInduk/siswa',
           options: Options(
               headers: {
                 'Content-Type': 'application/json',
@@ -34,7 +35,19 @@ class UserController extends GetxController {
       } else {
         return null;
       }
-    } on DioException catch (e) {
+    } catch (e) {
+      print(e.toString());
+      if (e.toString() == "Connection timed out") {
+        Get.snackbar('message',
+            "Koneksi ke server terputus! Mohon hubungi pihak administrator server.",
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: const Color.fromARGB(255, 255, 193, 193),
+            colorText: Colors.red,
+            titleText: const Text(
+              'Pesan Error',
+              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
+            ));
+      }
       throw Exception(e.toString());
     }
     return null;

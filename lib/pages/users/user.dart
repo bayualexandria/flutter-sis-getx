@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:heroicons/heroicons.dart';
+import 'package:sis/utils/repositories/reporitories.dart';
 import '../../controllers/auth/authentication.dart';
 import '../../controllers/users/user_controller.dart';
 import '../../pages/users/menu/profile.dart';
@@ -15,6 +16,7 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   Authentication authentication = Get.put(Authentication());
   UserController userController = Get.put(UserController());
+  final repositori = APIEndPoints().baseUrlImage;
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -34,7 +36,7 @@ class _ProfileState extends State<Profile> {
             future: userController.user(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                final imageUrl = snapshot.data['image_profile'];
+                final imageUrl = snapshot.data['siswa']['image_profile'];
                 return RefreshIndicator(
                   onRefresh: () {
                     return userController.user();
@@ -54,21 +56,21 @@ class _ProfileState extends State<Profile> {
                               height: size.height * 0.025,
                             ),
                             Text(
-                              snapshot.data['nama'],
+                              snapshot.data['siswa']['nama'],
                               style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
                                   fontSize: 20),
                             ),
                             Text(
-                              snapshot.data['nis'],
+                              snapshot.data['siswa']['nis'],
                               style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
                                   fontSize: 14),
                             ),
                             Text(
-                              snapshot.data['no_hp'],
+                              snapshot.data['email'],
                               style: const TextStyle(
                                   fontWeight: FontWeight.normal,
                                   color: Colors.white,
@@ -83,7 +85,7 @@ class _ProfileState extends State<Profile> {
                           child: CircleAvatar(
                             backgroundImage: NetworkImage(
                               imageUrl != null
-                                  ? 'http://192.168.1.6:8000/storage/$imageUrl'
+                                  ? '$repositori$imageUrl'
                                   : 'https://kemahasiswaan.umpp.ac.id/upload/default.png',
                             ),
                             radius: 39,
@@ -122,7 +124,7 @@ class _ProfileState extends State<Profile> {
                     onPressed: () {
                       Navigator.of(context, rootNavigator: false).push(
                           MaterialPageRoute(
-                              builder: (context) => const Personal(),
+                              builder: (context) => Personal(),
                               maintainState: false));
                     },
                     child: Row(
