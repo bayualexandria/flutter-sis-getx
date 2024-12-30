@@ -107,10 +107,8 @@ class _LoginPageState extends State<LoginPage> {
                                 loadingLogin = false;
                                 Timer(const Duration(seconds: 5), () {
                                   authentication.loginEndPoint();
-                                  Timer(const Duration(seconds: 1), () {
-                                    setState(() {
-                                      loadingLogin = true;
-                                    });
+                                  setState(() {
+                                    loadingLogin = true;
                                   });
                                 });
                               });

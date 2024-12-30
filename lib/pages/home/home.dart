@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:get/get.dart';
 import 'package:sis/utils/repositories/reporitories.dart';
 import '../../controllers/users/user_controller.dart';
@@ -55,7 +54,8 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  int _current = 0;
+  final int _current = 0;
+
   final CarouselController _controller = CarouselController();
   final userController = Get.put(UserController());
   final repositori = APIEndPoints().baseUrlImage;
@@ -174,40 +174,40 @@ class _HomeState extends State<Home> {
               SizedBox(
                 height: size.height * 0.01,
               ),
-              CarouselSlider(
-                items: imageSliders,
-                carouselController: _controller,
-                options: CarouselOptions(
-                    autoPlay: true,
-                    enlargeCenterPage: true,
-                    aspectRatio: 2.0,
-                    onPageChanged: (index, reason) {
-                      setState(() {
-                        _current = index;
-                      });
-                    }),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: imgList.asMap().entries.map((entry) {
-                  return GestureDetector(
-                    onTap: () => _controller.animateToPage(entry.key),
-                    child: Container(
-                      width: 5.0,
-                      height: 5.0,
-                      margin: const EdgeInsets.symmetric(
-                          vertical: 8.0, horizontal: 2.0),
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: (Theme.of(context).brightness ==
-                                      Brightness.dark
-                                  ? Colors.white
-                                  : Colors.white)
-                              .withOpacity(_current == entry.key ? 0.9 : 0.4)),
-                    ),
-                  );
-                }).toList(),
-              ),
+              // CarouselSlider(
+              //   items: imageSliders,
+              //   carouselController: _controller,
+              //   options: CarouselOptions(
+              //       autoPlay: true,
+              //       enlargeCenterPage: true,
+              //       aspectRatio: 2.0,
+              //       onPageChanged: (index, reason) {
+              //         setState(() {
+              //           _current = index;
+              //         });
+              //       }),
+              // ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.center,
+              //   children: imgList.asMap().entries.map((entry) {
+              //     return GestureDetector(
+              //       onTap: () => _controller.animateTo(entry.key),
+              //       child: Container(
+              //         width: 5.0,
+              //         height: 5.0,
+              //         margin: const EdgeInsets.symmetric(
+              //             vertical: 8.0, horizontal: 2.0),
+              //         decoration: BoxDecoration(
+              //             shape: BoxShape.circle,
+              //             color: (Theme.of(context).brightness ==
+              //                         Brightness.dark
+              //                     ? Colors.white
+              //                     : Colors.white)
+              //                 .withOpacity(_current == entry.key ? 0.9 : 0.4)),
+              //       ),
+              //     );
+              //   }).toList(),
+              // ),
               SizedBox(
                 height: size.height * 0.03,
               ),

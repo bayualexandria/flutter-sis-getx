@@ -45,7 +45,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   List<Widget> get bodyWidget {
-    return <Widget>[Home(), ListPage(), Message(), Profile()];
+    return <Widget>[const Home(), const ListPage(), const Message(), const Profile()];
   }
 
   CustomNavigationBarItem itemNav(

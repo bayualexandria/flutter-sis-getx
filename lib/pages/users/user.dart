@@ -124,7 +124,7 @@ class _ProfileState extends State<Profile> {
                     onPressed: () {
                       Navigator.of(context, rootNavigator: false).push(
                           MaterialPageRoute(
-                              builder: (context) => Personal(),
+                              builder: (context) => const Personal(),
                               maintainState: false));
                     },
                     child: Row(

@@ -13,7 +13,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   final Authentication authentication = Get.put(Authentication());
   Future<void> initializeSettings() async {
-    await Future.delayed(Duration(seconds: 10));
+    await Future.delayed(const Duration(seconds: 10));
     authentication.hasToken();
 
     //Simulate other services for 3 seconds
@@ -27,10 +27,11 @@ class _SplashScreenState extends State<SplashScreen> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return waitingView();
         } else {
-          if (snapshot.hasError)
+          if (snapshot.hasError) {
             return errorView(snapshot);
-          else
-            return Middleware();
+          } else {
+            return const Middleware();
+          }
         }
       },
     );

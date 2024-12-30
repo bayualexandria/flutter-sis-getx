@@ -62,8 +62,19 @@ class Authentication extends GetxController {
           key: 'username', value: response.data['user']['username']);
       Get.off(const HomePage());
       return response.data;
-    } catch (e) {
-      return e.printError();
+    } on DioException catch (e) {
+      print(e.message);
+      if (e.message != null) {
+        Get.snackbar(
+            'message', "Server terputus atau koneksi internet tidak aktif!",
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: const Color.fromARGB(255, 255, 193, 193),
+            colorText: Colors.red,
+            titleText: const Text(
+              'Pesan Error',
+              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
+            ));
+      }
     }
   }
 

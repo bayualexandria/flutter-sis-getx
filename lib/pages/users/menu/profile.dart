@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sis/controllers/users/user_controller.dart';
 import 'package:sis/pages/users/menu/components/text_area_field.dart';
-import 'package:sis/pages/users/menu/components/text_field.dart';
+import 'package:sis/pages/users/menu/gender.dart';
 import 'package:sis/utils/repositories/reporitories.dart';
+import 'package:heroicons/heroicons.dart';
 
 class Personal extends StatefulWidget {
   const Personal({super.key});
@@ -16,8 +17,7 @@ class _PersonalState extends State<Personal> {
   UserController userController = Get.put(UserController());
   final repositori = APIEndPoints().baseUrlImage;
   final nis = TextEditingController();
-  final name = TextEditingController();
-  final jenisKelamin = TextEditingController();
+  final nama = TextEditingController();
   final noHp = TextEditingController();
   final alamat = TextEditingController();
 
@@ -33,30 +33,31 @@ class _PersonalState extends State<Personal> {
           ),
           actions: [
             Padding(
-                padding: EdgeInsets.only(right: 20.0),
-                child: GestureDetector(
-                    onTap: () {},
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      child: Text(
-                        "Simpan",
-                        style: TextStyle(
-                            color: Color.fromARGB(255, 255, 11, 243),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          side: BorderSide(
-                              width: 3,
-                              color: Colors.white), //border width and color
-                          elevation: 0, //elevation of button
+                padding: const EdgeInsets.only(right: 20.0),
+                child: ElevatedButton(
+                  onPressed: () {
+                    userController.updateUser(
+                        nohp: noHp, nama: nama, alamat: alamat);
+                  },
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      side: const BorderSide(
+                          width: 3,
+                          color: Colors.white), //border width and color
+                      elevation: 0, //elevation of button
 
-                          padding: EdgeInsets.symmetric(
-                              vertical: 0.5,
-                              horizontal: 3.0) //content padding inside button
-                          ),
-                    ))),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 0.5,
+                          horizontal: 3.0) //content padding inside button
+                      ),
+                  child: const Text(
+                    "Simpan",
+                    style: TextStyle(
+                        color: Color.fromARGB(255, 255, 11, 243),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15),
+                  ),
+                )),
           ],
         ),
         body: Container(
@@ -73,11 +74,14 @@ class _PersonalState extends State<Personal> {
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
                           nis.text = snapshot.data['siswa']['nis'];
-                          name.text = snapshot.data['siswa']['nama'];
-                          jenisKelamin.text = snapshot.data['siswa']['jenis_kelamin'];
+                          nama.text = snapshot.data['siswa']['nama'];
                           noHp.text = snapshot.data['siswa']['no_hp'];
                           alamat.text = snapshot.data['siswa']['alamat'];
-                          final imageUrl = snapshot.data['siswa']['image_profile'];
+
+                          final String jns =
+                              snapshot.data['siswa']['jenis_kelamin'];
+                          final imageUrl =
+                              snapshot.data['siswa']['image_profile'];
                           return Container(
                             padding: const EdgeInsets.symmetric(
                                 vertical: 30, horizontal: 15),
@@ -105,55 +109,125 @@ class _PersonalState extends State<Personal> {
                                 SizedBox(
                                   height: size.height * 0.05,
                                 ),
-                                TextFormField(
-                                  controller: nis,
-                                  readOnly: true,
-                                  style: TextStyle(
-                                    color: Color.fromARGB(255, 71, 71, 71),
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                  decoration: InputDecoration(
-                                    label: Text(
-                                      "No Induk Siswa",
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 0, horizontal: 10),
+                                  child: TextFormField(
+                                    controller: nis,
+                                    readOnly: true,
+                                    style: const TextStyle(
+                                      color: Color.fromARGB(255, 71, 71, 71),
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    decoration: const InputDecoration(
+                                      label: Text(
+                                        "No Induk Siswa",
+                                      ),
                                     ),
                                   ),
                                 ),
                                 SizedBox(
                                   height: size.height * 0.01,
                                 ),
-                                TextFieldPersonal(
-                                  controller: name,
-                                  text: 'Nama Lengkap',
-                                  typeInput: TextInputType.text,
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 0, horizontal: 10),
+                                  child: TextFormField(
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    // ignore: unrelated_type_equality_checks
+                                    onChanged: (value) => value != nama,
+                                    controller: nama,
+                                    keyboardType: TextInputType.text,
+                                    decoration: const InputDecoration(
+                                      label: Text(
+                                        "Nama Lengkap",
+                                      ),
+                                    ),
+                                  ),
                                 ),
                                 SizedBox(
                                   height: size.height * 0.01,
                                 ),
-                                TextFieldPersonal(
-                                  controller: jenisKelamin,
-                                  text: 'Jenis Kelamin',
-                                  typeInput: TextInputType.text,
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context, rootNavigator: false)
+                                        .push(MaterialPageRoute(
+                                            builder: (context) => UserGender(
+                                                  jenisKelaminIntern: jns,
+                                                ),
+                                            maintainState: false));
+                                  },
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Text(
+                                        "Jenis Kelamin",
+                                        style: TextStyle(color: Colors.black54),
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            snapshot.data['siswa']
+                                                ['jenis_kelamin'],
+                                            style: const TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w800),
+                                          ),
+                                          const HeroIcon(
+                                            HeroIcons.chevronRight,
+                                            color: Colors.black,
+                                          )
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
                                 SizedBox(
                                   height: size.height * 0.01,
                                 ),
-                                TextFieldPersonal(
-                                  controller: noHp,
-                                  text: 'No. Handphone',
-                                  typeInput: TextInputType.number,
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 0, horizontal: 10),
+                                  child: TextFormField(
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    controller: noHp,
+                                    onChanged: (value) => value != noHp,
+                                    keyboardType: TextInputType.text,
+                                    decoration: const InputDecoration(
+                                      label: Text(
+                                        "No Handphone",
+                                      ),
+                                    ),
+                                  ),
                                 ),
                                 SizedBox(
                                   height: size.height * 0.01,
                                 ),
-                                TextAreaFieldPersonal(
-                                  controller: alamat,
-                                  text: 'Alamat',
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 0, horizontal: 10),
+                                  child: TextAreaFieldPersonal(
+                                    onChanged: (value) => value != alamat,
+                                    controller: alamat,
+                                    text: 'Alamat',
+                                  ),
                                 )
                               ],
                             ),
                           );
                         }
-                        return Center(
+                        return const Center(
                           child: CircularProgressIndicator(
                             color: Color.fromARGB(255, 255, 11, 243),
                           ),
