@@ -70,7 +70,7 @@ class _PersonalState extends State<Personal> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   FutureBuilder(
-                      future: userController.user(),
+                      future: userController.getUser(),
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
                           nis.text = snapshot.data['siswa']['nis'];
@@ -140,6 +140,7 @@ class _PersonalState extends State<Personal> {
                                     // ignore: unrelated_type_equality_checks
                                     onChanged: (value) => value != nama,
                                     controller: nama,
+                                    enabled: true,
                                     keyboardType: TextInputType.text,
                                     decoration: const InputDecoration(
                                       label: Text(

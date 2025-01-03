@@ -57,6 +57,24 @@ class UserController extends GetxController {
     return null;
   }
 
+  Future getUser() async {
+    final token = await storage.read(key: 'token');
+    final noInduk = await storage.read(key: 'username');
+    final response = await dio.get('$repositori/user/$noInduk/siswa',
+        options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+            followRedirects: false,
+            validateStatus: (status) {
+              return status! < 500;
+            }));
+
+    return response.data['data'];
+  }
+
   Future<void> updateUser(
       {required TextEditingController nama,
       required TextEditingController nohp,
@@ -99,6 +117,8 @@ class UserController extends GetxController {
       return e.printError();
     }
   }
+
+  
 
   Future<void> genderUser() async {
     final token = await storage.read(key: 'token');
