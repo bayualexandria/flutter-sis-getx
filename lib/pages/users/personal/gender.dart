@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:heroicons/heroicons.dart';
 import 'package:sis/controllers/users/user_controller.dart';
-import 'package:sis/pages/users/menu/profile.dart';
+import 'package:sis/pages/users/personal/profile.dart';
 
 class UserGender extends StatefulWidget {
   String? jenisKelaminIntern;

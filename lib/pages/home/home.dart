@@ -1,8 +1,10 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sis/utils/repositories/reporitories.dart';
 import '../../controllers/users/user_controller.dart';
 import 'package:heroicons/heroicons.dart';
+import 'package:shimmer/shimmer.dart';
 
 final List<String> imgList = [
   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTlogsxIACrSMcDYNSrv5_Fb1dqMCfMDhmn9JyB_xu72QRd5lZqBfAEW1184oBtoh4OPM0&usqp=CAU',
@@ -32,14 +34,14 @@ final List<Widget> imageSliders = imgList
                 ),
                 padding: const EdgeInsets.symmetric(
                     vertical: 10.0, horizontal: 20.0),
-                // child: Text(
-                //   'No. ${imgList.indexOf(item)} image',
-                //   style: TextStyle(
-                //     color: Colors.white,
-                //     fontSize: 20.0,
-                //     fontWeight: FontWeight.bold,
-                //   ),
-                // ),
+                child: Text(
+                  'No. ${imgList.indexOf(item)} image',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ),
           ],
@@ -54,9 +56,9 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final int _current = 0;
+  int _current = 0;
 
-  final CarouselController _controller = CarouselController();
+  final CarouselSliderController _controller = CarouselSliderController();
   final userController = Get.put(UserController());
   final repositori = APIEndPoints().baseUrlImage;
   @override
@@ -80,33 +82,34 @@ class _HomeState extends State<Home> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              FutureBuilder(
-                  future: userController.user(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      final imageUrl = snapshot.data['siswa']['image_profile'];
-                      return Container(
-                        padding: const EdgeInsets.only(
-                          top: 10,
-                          left: 1,
-                          right: 1,
-                        ),
-                        width: double.infinity,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Column(
-                              children: [
-                                Text(
-                                  "Selamat Datang \nSistem Informasi Siswa",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20,
-                                      color: Colors.white),
-                                )
-                              ],
-                            ),
-                            Column(
+              Container(
+                padding: const EdgeInsets.only(
+                  top: 10,
+                  left: 1,
+                  right: 1,
+                ),
+                width: double.infinity,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Column(
+                      children: [
+                        Text(
+                          "Selamat Datang \nSistem Informasi Siswa",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                              color: Colors.white),
+                        )
+                      ],
+                    ),
+                    FutureBuilder(
+                        future: userController.user(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            final imageUrl =
+                                snapshot.data['siswa']['image_profile'];
+                            return Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
@@ -131,39 +134,57 @@ class _HomeState extends State<Home> {
                                       color: Colors.white),
                                 )
                               ],
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-                    return const Center(
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                      ),
-                    );
-                  }),
+                            );
+                          }
+                          return Shimmer.fromColors(baseColor: Colors.grey.shade300,
+                              highlightColor: Colors.grey.shade100,
+                              enabled: true,child:Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(25),
+                                      color: Colors.white),
+                                ),
+                                SizedBox(
+                                  height: size.height * 0.005,
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 24),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(2),
+                                      color: Colors.white),
+                                )
+                              ],
+                            ),);
+                        }),
+                  ],
+                ),
+              ),
               SizedBox(
                 height: size.height * 0.03,
               ),
-              // const Text(
-              //   'Dashboard',
-              //   style: TextStyle(
-              //       fontWeight: FontWeight.w500,
-              //       fontSize: 15,
-              //       color: Colors.white),
-              // ),
-              // SizedBox(
-              //   height: size.height * 0.01,
-              // ),
-              // Container(
-              //   padding: const EdgeInsets.all(15),
-              //   decoration: BoxDecoration(
-              //       borderRadius: BorderRadius.circular(5),
-              //       color: Colors.white),
-              // ),
-              // SizedBox(
-              //   height: size.height * 0.03,
-              // ),
+              const Text(
+                'Dashboard',
+                style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 15,
+                    color: Colors.white),
+              ),
+              SizedBox(
+                height: size.height * 0.01,
+              ),
+              Container(
+                padding: const EdgeInsets.all(15),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: Colors.white),
+              ),
+              SizedBox(
+                height: size.height * 0.03,
+              ),
               const Text(
                 'Informasi',
                 style: TextStyle(
@@ -174,40 +195,40 @@ class _HomeState extends State<Home> {
               SizedBox(
                 height: size.height * 0.01,
               ),
-              // CarouselSlider(
-              //   items: imageSliders,
-              //   carouselController: _controller,
-              //   options: CarouselOptions(
-              //       autoPlay: true,
-              //       enlargeCenterPage: true,
-              //       aspectRatio: 2.0,
-              //       onPageChanged: (index, reason) {
-              //         setState(() {
-              //           _current = index;
-              //         });
-              //       }),
-              // ),
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.center,
-              //   children: imgList.asMap().entries.map((entry) {
-              //     return GestureDetector(
-              //       onTap: () => _controller.animateTo(entry.key),
-              //       child: Container(
-              //         width: 5.0,
-              //         height: 5.0,
-              //         margin: const EdgeInsets.symmetric(
-              //             vertical: 8.0, horizontal: 2.0),
-              //         decoration: BoxDecoration(
-              //             shape: BoxShape.circle,
-              //             color: (Theme.of(context).brightness ==
-              //                         Brightness.dark
-              //                     ? Colors.white
-              //                     : Colors.white)
-              //                 .withOpacity(_current == entry.key ? 0.9 : 0.4)),
-              //       ),
-              //     );
-              //   }).toList(),
-              // ),
+              CarouselSlider(
+                items: imageSliders,
+                carouselController: _controller,
+                options: CarouselOptions(
+                    autoPlay: true,
+                    enlargeCenterPage: true,
+                    aspectRatio: 2.0,
+                    onPageChanged: (index, reason) {
+                      setState(() {
+                        _current = index;
+                      });
+                    }),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: imgList.asMap().entries.map((entry) {
+                  return GestureDetector(
+                    onTap: () => _controller.animateToPage(entry.key),
+                    child: Container(
+                      width: 5.0,
+                      height: 5.0,
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 8.0, horizontal: 2.0),
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: (Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? Colors.white
+                                  : Colors.white)
+                              .withOpacity(_current == entry.key ? 0.9 : 0.4)),
+                    ),
+                  );
+                }).toList(),
+              ),
               SizedBox(
                 height: size.height * 0.03,
               ),
@@ -239,7 +260,7 @@ class _HomeState extends State<Home> {
                             size: 25,
                             color: Color.fromARGB(255, 3, 141, 221),
                           ),
-                          title: "Siswa",
+                          titleSub: "Siswa",
                         ),
                         MenuIcon(
                           size: size,
@@ -248,7 +269,7 @@ class _HomeState extends State<Home> {
                             size: 25,
                             color: Color.fromARGB(255, 163, 255, 87),
                           ),
-                          title: "Sekolah",
+                          titleSub: "Sekolah",
                         ),
                         MenuIcon(
                           size: size,
@@ -257,7 +278,7 @@ class _HomeState extends State<Home> {
                             size: 25,
                             color: Color.fromARGB(255, 193, 106, 252),
                           ),
-                          title: "Kelulusan",
+                          titleSub: "Kelulusan",
                         ),
                         MenuIcon(
                           size: size,
@@ -266,7 +287,7 @@ class _HomeState extends State<Home> {
                             size: 25,
                             color: Color.fromARGB(255, 221, 241, 38),
                           ),
-                          title: "Jadwal Ujian",
+                          titleSub: "Jadwal Ujian",
                         ),
                       ],
                     ),
@@ -283,7 +304,7 @@ class _HomeState extends State<Home> {
                             size: 25,
                             color: Color.fromARGB(255, 41, 196, 216),
                           ),
-                          title: "Hasil Ujian",
+                          titleSub: "Hasil Ujian",
                         ),
                         MenuIcon(
                           size: size,
@@ -292,7 +313,7 @@ class _HomeState extends State<Home> {
                             size: 25,
                             color: Color.fromARGB(255, 33, 137, 206),
                           ),
-                          title: "Mapel",
+                          titleSub: "Mapel",
                         ),
                         MenuIcon(
                           size: size,
@@ -301,7 +322,7 @@ class _HomeState extends State<Home> {
                             size: 25,
                             color: Color.fromARGB(255, 231, 51, 51),
                           ),
-                          title: "Guru",
+                          titleSub: "Guru",
                         ),
                         MenuIcon(
                           size: size,
@@ -310,7 +331,7 @@ class _HomeState extends State<Home> {
                             size: 25,
                             color: Color.fromARGB(255, 38, 143, 241),
                           ),
-                          title: "Kelas",
+                          titleSub: "Kelas",
                         ),
                       ],
                     ),
@@ -327,7 +348,7 @@ class _HomeState extends State<Home> {
                             size: 25,
                             color: Color.fromARGB(255, 216, 41, 70),
                           ),
-                          title: "Pengumuman",
+                          titleSub: "Pengumuman",
                         ),
                         SizedBox(
                           width: size.width * 0.03,
@@ -339,7 +360,7 @@ class _HomeState extends State<Home> {
                             size: 25,
                             color: Color.fromARGB(255, 137, 33, 206),
                           ),
-                          title: "Informasi",
+                          titleSub: "Informasi",
                         ),
                       ],
                     )
@@ -357,11 +378,14 @@ class _HomeState extends State<Home> {
 
 class MenuIcon extends StatelessWidget {
   const MenuIcon(
-      {super.key, required this.size, required this.icon, required this.title});
+      {super.key,
+      required this.size,
+      required this.icon,
+      required this.titleSub});
 
   final Size size;
   final HeroIcon icon;
-  final title;
+  final titleSub;
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -372,7 +396,7 @@ class MenuIcon extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: Text(
-              title,
+              titleSub,
               style: const TextStyle(
                   fontWeight: FontWeight.normal,
                   fontSize: 10,

@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:heroicons/heroicons.dart';
-import 'package:sis/pages/users/menu/profile.dart';
+import 'package:sis/pages/auth/login_page.dart';
+import 'package:sis/pages/users/personal/profile.dart';
 import '../auth/authentication.dart';
 import '../../utils/repositories/reporitories.dart';
 
@@ -30,7 +31,7 @@ class UserController extends GetxController {
               validateStatus: (status) {
                 return status! < 500;
               }));
-      print(response);
+
       if (response.data['data'] != null) {
         return response.data['data'];
       }
@@ -40,7 +41,7 @@ class UserController extends GetxController {
         return null;
       }
     } catch (e) {
-      print(e.toString());
+
       if (e.toString() == "Connection timed out") {
         Get.snackbar('message',
             "Koneksi ke server terputus! Mohon hubungi pihak administrator server.",
@@ -81,8 +82,7 @@ class UserController extends GetxController {
       required TextEditingController alamat}) async {
     final token = await storage.read(key: 'token');
     final noInduk = await storage.read(key: 'username');
-    print("hello");
-    print(alamat);
+
     Map body = {'nama': nama.text, 'no_hp': nohp.text, 'alamat': alamat.text};
     try {
       final response = await dio.post('$repositori/siswa/$noInduk',
@@ -98,7 +98,6 @@ class UserController extends GetxController {
                 return status! < 500;
               }));
 
-      print(response);
       Get.off(const Personal());
       Get.snackbar('message', response.data['message'],
           snackPosition: SnackPosition.BOTTOM,
@@ -117,8 +116,6 @@ class UserController extends GetxController {
       return e.printError();
     }
   }
-
-  
 
   Future<void> genderUser() async {
     final token = await storage.read(key: 'token');
@@ -140,7 +137,6 @@ class UserController extends GetxController {
                 return status! < 500;
               }));
 
-      print(response);
       Get.off(const Personal());
       Get.snackbar('message', response.data['message'],
           snackPosition: SnackPosition.BOTTOM,
@@ -150,6 +146,104 @@ class UserController extends GetxController {
             HeroIcons.check,
             color: Colors.green,
           ),
+          titleText: const Text(
+            'Pesan Success',
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
+          ));
+      return response.data;
+    } catch (e) {
+      return e.printError();
+    }
+  }
+
+  // Change Email
+  Future<void> changeEmail({required TextEditingController email}) async {
+    final token = await storage.read(key: 'token');
+    final noInduk = await storage.read(key: 'username');
+
+    Map body = {
+      'email': email.text,
+    };
+
+    try {
+      final response = await dio.post('$repositori/siswa/changeEmail/$noInduk',
+          data: body,
+          options: Options(
+              followRedirects: false,
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Authorization': 'Bearer $token',
+              },
+              validateStatus: (status) {
+                return status! < 500;
+              }));
+      await dio.get('$repositori/logout',
+          options: Options(
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Authorization': 'Bearer $token',
+              },
+              followRedirects: false,
+              validateStatus: (status) {
+                return status! < 500;
+              }));
+      await storage.deleteAll();
+      Get.off(const LoginPage());
+      Get.snackbar('message', response.data['message'],
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: const Color.fromARGB(255, 200, 255, 195),
+          colorText: Colors.green,
+          titleText: const Text(
+            'Pesan Success',
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
+          ));
+    } catch (e) {
+      return e.printError();
+    }
+  }
+
+  // Change Password
+  Future<void> changePassword({required TextEditingController password}) async {
+    final token = await storage.read(key: 'token');
+    final noInduk = await storage.read(key: 'username');
+
+    Map body = {
+      'password': password.text,
+    };
+
+    try {
+      final response =
+          await dio.post('$repositori/siswa/changePassword/$noInduk',
+              data: body,
+              options: Options(
+                  followRedirects: false,
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': 'Bearer $token',
+                  },
+                  validateStatus: (status) {
+                    return status! < 500;
+                  }));
+      await dio.get('$repositori/logout',
+          options: Options(
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Authorization': 'Bearer $token',
+              },
+              followRedirects: false,
+              validateStatus: (status) {
+                return status! < 500;
+              }));
+      await storage.deleteAll();
+      Get.off(const LoginPage());
+      Get.snackbar('message', response.data['message'],
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: const Color.fromARGB(255, 200, 255, 195),
+          colorText: Colors.green,
           titleText: const Text(
             'Pesan Success',
             style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sis/controllers/users/user_controller.dart';
-import 'package:sis/pages/users/menu/components/text_area_field.dart';
-import 'package:sis/pages/users/menu/gender.dart';
+import 'package:sis/pages/users/personal/components/text_area_field.dart';
+import 'package:sis/pages/users/personal/gender.dart';
 import 'package:sis/utils/repositories/reporitories.dart';
 import 'package:heroicons/heroicons.dart';
 
@@ -137,7 +137,7 @@ class _PersonalState extends State<Personal> {
                                       color: Colors.black,
                                       fontWeight: FontWeight.w500,
                                     ),
-                                    // ignore: unrelated_type_equality_checks
+                                   
                                     onChanged: (value) => value != nama,
                                     controller: nama,
                                     enabled: true,

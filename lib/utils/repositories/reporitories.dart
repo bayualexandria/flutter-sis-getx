@@ -1,4 +1,4 @@
 class APIEndPoints {
-  String baseUrl = 'https://alexandria13.id30.tunnel.my.id/api';
-  String baseUrlImage = 'https://alexandria13.id30.tunnel.my.id/storage/';
+  String baseUrl = 'https://alexandria13.id29.tunnel.my.id/api';
+  String baseUrlImage = 'https://alexandria13.id29.tunnel.my.id/storage/';
 }

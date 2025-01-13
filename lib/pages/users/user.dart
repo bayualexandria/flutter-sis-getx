@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:heroicons/heroicons.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:sis/pages/users/security/keamanan.dart';
 import 'package:sis/utils/repositories/reporitories.dart';
 import '../../controllers/auth/authentication.dart';
 import '../../controllers/users/user_controller.dart';
-import '../../pages/users/menu/profile.dart';
+import 'personal/profile.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -96,9 +98,62 @@ class _ProfileState extends State<Profile> {
                   ),
                 );
               }
-              return const Center(
-                child: CircularProgressIndicator(
-                  color: Colors.white,
+              return Shimmer.fromColors(
+                baseColor: Colors.grey.shade300,
+                highlightColor: Colors.grey.shade100,
+                enabled: true,
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                      top: 50, left: 20, right: 20, bottom: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            height: size.height * 0.025,
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 13, horizontal: 70),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: Colors.white),
+                          ),
+                          SizedBox(
+                            height: size.height * 0.002,
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8, horizontal: 70),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: Colors.white),
+                          ),
+                          SizedBox(
+                            height: size.height * 0.0025,
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 5, horizontal: 70),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: Colors.white),
+                          )
+                        ],
+                      ),
+                      Container(
+                        height: size.height*0.1,
+                        width: size.width*0.2,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(39),
+                            color: Colors.white),
+                      ),
+                    ],
+                  ),
                 ),
               );
             }),
@@ -184,7 +239,10 @@ class _ProfileState extends State<Profile> {
                   ),
                   // Security
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => Keamanan()));
+                    },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -196,7 +254,7 @@ class _ProfileState extends State<Profile> {
                               width: size.width * 0.02,
                             ),
                             const Text(
-                              'Kemanan',
+                              'Keamanan',
                               style: TextStyle(
                                   color: Color.fromARGB(255, 255, 11, 243),
                                   fontSize: 14,

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:io';
 import 'splash_screen.dart';
+import 'package:connection_notifier/connection_notifier.dart';
 
 class MyHttpOverrides extends HttpOverrides {
   @override
@@ -34,10 +35,13 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return const GetMaterialApp(
-      debugShowCheckedModeBanner: false,
-      //  theme: ThemeData(fontFamily: 'Montserrat'),
-      home: SplashScreen(),
-    );
+    return const ConnectionNotifier(
+        connectionNotificationOptions: ConnectionNotificationOptions(
+            alignment: AlignmentDirectional.topCenter, height: 40),
+        child: GetMaterialApp(
+          debugShowCheckedModeBanner: false,
+          //  theme: ThemeData(fontFamily: 'Montserrat'),
+          home: SplashScreen(),
+        ));
   }
 }

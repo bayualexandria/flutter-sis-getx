@@ -1,5 +1,4 @@
 import 'dart:async';
-// import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -27,7 +26,6 @@ class Authentication extends GetxController {
                 return status! < 500;
               }));
 
-      print(response);
       if (response.data['status'] == 401) {
         final messages = response.data['message'];
         final username = messages['username'] ?? '';
@@ -63,7 +61,6 @@ class Authentication extends GetxController {
       Get.off(const HomePage());
       return response.data;
     } on DioException catch (e) {
-      print(e.message);
       if (e.message != null) {
         Get.snackbar(
             'message', "Server terputus atau koneksi internet tidak aktif!",
@@ -103,7 +100,7 @@ class Authentication extends GetxController {
 
   Future<bool> logout() async {
     final token = await storage.read(key: 'token');
-    final response = await dio.get('$repositori/logout',
+    await dio.get('$repositori/logout',
         options: Options(
             headers: {
               'Content-Type': 'application/json',
@@ -114,10 +111,8 @@ class Authentication extends GetxController {
             validateStatus: (status) {
               return status! < 500;
             }));
-    print(response);
     await storage.deleteAll();
     Get.off(const LoginPage());
-    print(response);
     return true;
   }
 }

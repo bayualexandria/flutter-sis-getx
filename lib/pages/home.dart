@@ -45,7 +45,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   List<Widget> get bodyWidget {
-    return <Widget>[const Home(), const ListPage(), const Message(), const Profile()];
+    return <Widget>[
+      const Home(),
+      const ListPage(),
+      const Message(),
+      const Profile()
+    ];
   }
 
   CustomNavigationBarItem itemNav(
@@ -58,17 +63,17 @@ class _HomePageState extends State<HomePage> {
         ));
   }
 
-  AppBar buildAppBar() {
-    return AppBar(
-      leading: IconButton(onPressed: () {}, icon: const Icon(Icons.menu)),
-      centerTitle: true,
-      backgroundColor: Colors.white,
-      bottomOpacity: 0,
-      elevation: 0,
-      actions: [
-        IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
-      ],
-      iconTheme: const IconThemeData(color: Color(0xFFD9D9D9)),
-    );
-  }
+  // AppBar buildAppBar() {
+  //   return AppBar(
+  //     leading: IconButton(onPressed: () {}, icon: const Icon(Icons.menu)),
+  //     centerTitle: true,
+  //     backgroundColor: Colors.white,
+  //     bottomOpacity: 0,
+  //     elevation: 0,
+  //     actions: [
+  //       IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
+  //     ],
+  //     iconTheme: const IconThemeData(color: Color(0xFFD9D9D9)),
+  //   );
+  // }
 }
