@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sis/controllers/home_controller.dart';
 import 'package:sis/utils/repositories/reporitories.dart';
 import '../../controllers/users/user_controller.dart';
 import 'package:heroicons/heroicons.dart';
@@ -34,14 +35,6 @@ final List<Widget> imageSliders = imgList
                 ),
                 padding: const EdgeInsets.symmetric(
                     vertical: 10.0, horizontal: 20.0),
-                child: Text(
-                  'No. ${imgList.indexOf(item)} image',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
               ),
             ),
           ],
@@ -60,6 +53,7 @@ class _HomeState extends State<Home> {
 
   final CarouselSliderController _controller = CarouselSliderController();
   final userController = Get.put(UserController());
+  final homeController = Get.put(HomeController());
   final repositori = APIEndPoints().baseUrlImage;
   @override
   Widget build(BuildContext context) {
@@ -92,15 +86,40 @@ class _HomeState extends State<Home> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Column(
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Selamat Datang \nSistem Informasi Siswa",
+                          "Selamat Datang Di \nSistem Informasi Siswa",
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 20,
                               color: Colors.white),
-                        )
+                        ),
+                        FutureBuilder(
+                            future: homeController.profileSchool(),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                return Text(snapshot.data['nama_sekolah'],
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15,
+                                        color: Colors.white));
+                              }
+                              return Shimmer.fromColors(
+                                baseColor: Colors.grey.shade300,
+                                highlightColor: Colors.grey.shade100,
+                                enabled: true,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 10, horizontal: 70),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(2),
+                                      color: Colors.white),
+                                ),
+                              );
+                            })
                       ],
                     ),
                     FutureBuilder(
@@ -136,14 +155,17 @@ class _HomeState extends State<Home> {
                               ],
                             );
                           }
-                          return Shimmer.fromColors(baseColor: Colors.grey.shade300,
-                              highlightColor: Colors.grey.shade100,
-                              enabled: true,child:Column(
+                          return Shimmer.fromColors(
+                            baseColor: Colors.grey.shade300,
+                            highlightColor: Colors.grey.shade100,
+                            enabled: true,
+                            child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Container(
-                                  padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 20, horizontal: 20),
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(25),
                                       color: Colors.white),
@@ -152,13 +174,15 @@ class _HomeState extends State<Home> {
                                   height: size.height * 0.005,
                                 ),
                                 Container(
-                                  padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 24),
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 3, horizontal: 24),
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(2),
                                       color: Colors.white),
                                 )
                               ],
-                            ),);
+                            ),
+                          );
                         }),
                   ],
                 ),
@@ -177,10 +201,102 @@ class _HomeState extends State<Home> {
                 height: size.height * 0.01,
               ),
               Container(
-                padding: const EdgeInsets.all(15),
+                padding: const EdgeInsets.all(20),
+                width: double.infinity,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
                     color: Colors.white),
+                child: Row(
+                  children: [
+                    const Image(
+                      image: AssetImage('assets/images/logo-pendidikan.png'),
+                      width: 60,
+                    ),
+                    FutureBuilder(
+                        future: homeController.profileSchool(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return Row(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 0, horizontal: 20),
+                                  child: Column(
+                                    children: [
+                                      SizedBox(
+                                        width:size.width*0.35,
+                                        child: Text(
+                                          snapshot.data['nama_sekolah'],
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w900,
+                                              fontSize: 20,
+                                              color: Colors.black),
+                                        ),
+                                      ),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            "No Telephone : ",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.normal,
+                                                fontSize: 12,
+                                                color: Colors.black),
+                                          ),
+                                          Text(snapshot.data['no_telp'],
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.normal,
+                                                  fontSize: 12,
+                                                  color: Colors.black)),
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 25, horizontal: 2),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(2),
+                                      color: Color.fromARGB(255, 76, 76, 76)),
+                                ),
+                                SizedBox(
+                                  width: size.width * 0.03,
+                                ),
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Text('Akreditasi',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.normal,
+                                            fontSize: 12,
+                                            color: Colors.black)),
+                                    Text(snapshot.data['akreditasi'],
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w900,
+                                            fontSize: 24,
+                                            color: snapshot
+                                                        .data['akreditasi'] ==
+                                                    'A'
+                                                ? Color.fromARGB(
+                                                    255, 48, 253, 2)
+                                                : (snapshot.data[
+                                                            'akreditasi'] ==
+                                                        'B'
+                                                    ? Color.fromARGB(
+                                                        255, 0, 60, 255)
+                                                    : Color.fromARGB(
+                                                        255, 255, 0, 0))))
+                                  ],
+                                )
+                              ],
+                            );
+                          }
+                          return Text("");
+                        })
+                  ],
+                ),
               ),
               SizedBox(
                 height: size.height * 0.03,

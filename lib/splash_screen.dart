@@ -24,6 +24,7 @@ class _SplashScreenState extends State<SplashScreen> {
     return FutureBuilder(
       future: initializeSettings(),
       builder: (context, snapshot) {
+
         if (snapshot.connectionState == ConnectionState.waiting) {
           return waitingView();
         } else {

@@ -35,12 +35,15 @@ dependencies:
   dio: ^5.7.0
   flutter:
     sdk: flutter
+  flutter_cache_manager: ^3.4.1
   flutter_launcher_icons: ^0.14.2
   flutter_secure_storage: ^9.2.2
   get: ^4.6.6
+  google_sign_in: ^6.3.0
   heroicons: ^0.11.0
   heroicons_flutter: ^0.4.0
   image_picker: ^1.1.2
+  introduction_screen: ^3.1.14
   shimmer: ^3.0.0
 
 dev_dependencies:

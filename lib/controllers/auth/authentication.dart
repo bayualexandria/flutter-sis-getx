@@ -1,8 +1,11 @@
 import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sis/pages/intro.dart';
 import '../../pages/auth/login_page.dart';
 import '../../pages/home.dart';
 import '../../utils/repositories/reporitories.dart';
@@ -13,6 +16,8 @@ class Authentication extends GetxController {
   FlutterSecureStorage storage = const FlutterSecureStorage();
   Dio dio = Dio();
   final repositori = APIEndPoints().baseUrl;
+  static final _googleSignIn = GoogleSignIn();
+  bool loadingLogin = true;
 
   Future<void> loginEndPoint() async {
     Map body = {'username': username.text, 'password': password.text};
@@ -86,7 +91,7 @@ class Authentication extends GetxController {
       Get.off(const HomePage());
       return true;
     } else {
-      Get.off(const LoginPage());
+      Get.off(const Intro());
       return false;
     }
   }
@@ -112,7 +117,69 @@ class Authentication extends GetxController {
               return status! < 500;
             }));
     await storage.deleteAll();
+    await _googleSignIn.disconnect();
+    await DefaultCacheManager().emptyCache();
     Get.off(const LoginPage());
     return true;
+  }
+
+  Future loginGoogle() async {
+    final user = await _googleSignIn.signIn();
+    final id = user?.id;
+    final name = user?.displayName;
+    final email = user?.email;
+    loadingLogin = false;
+
+    try {
+      final response =
+          await dio.get('$repositori/login/google/$email/$id/$name',
+              options: Options(
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                  },
+                  followRedirects: false,
+                  validateStatus: (status) {
+                    return status! < 500;
+                  }));
+
+      if (response.data['status'] == 403) {
+        await _googleSignIn.disconnect();
+        loadingLogin = true;
+        Get.snackbar('message', response.data['message'],
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: const Color.fromARGB(255, 255, 193, 193),
+            colorText: Colors.red,
+            titleText: const Text(
+              'Pesan Error',
+              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
+            ));
+        return response.data['message'];
+      }
+      await storage.write(key: 'token', value: response.data['accessToken']);
+      await storage.write(
+          key: 'username', value: response.data['user']['username']);
+      loadingLogin = true;
+      Get.off(const HomePage());
+      return response.data;
+    } on DioException catch (e) {
+      await _googleSignIn.signOut();
+      print('error akun google');
+      print(e.message);
+      if (e.message != null) {
+        loadingLogin = true;
+        Get.snackbar('message',
+            "User belum terdaftar! Silahkan hubungi administrator sekolah.",
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: const Color.fromARGB(255, 255, 193, 193),
+            colorText: Colors.red,
+            titleText: const Text(
+              'Pesan Error',
+              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
+            ));
+      }
+
+      return null;
+    }
   }
 }

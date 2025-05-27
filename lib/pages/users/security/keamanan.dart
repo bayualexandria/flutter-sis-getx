@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:heroicons/heroicons.dart';
 import 'package:sis/controllers/users/user_controller.dart';
+import 'package:sis/controllers/auth/authentication.dart';
 import 'package:shimmer/shimmer.dart';
 
 class Keamanan extends StatefulWidget {
@@ -13,6 +16,7 @@ class Keamanan extends StatefulWidget {
 
 class _KeamananState extends State<Keamanan> {
   UserController userController = Get.put(UserController());
+  Authentication authentication = Get.put(Authentication());
   bool showPassword = false;
   @override
   Widget build(BuildContext context) {
@@ -128,14 +132,18 @@ class _KeamananState extends State<Keamanan> {
                             style: TextStyle(fontWeight: FontWeight.w600),
                           );
                         }
-                        return Shimmer.fromColors(baseColor: Colors.grey.shade300,
+                        return Shimmer.fromColors(
+                          baseColor: Colors.grey.shade300,
                           highlightColor: Colors.grey.shade100,
-                          enabled: true,child: Container(
-                          padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(2),
-                              color: Colors.white),
-                        ),);
+                          enabled: true,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 5, horizontal: 15),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(2),
+                                color: Colors.white),
+                          ),
+                        );
                       }),
                   SizedBox(
                     height: size.height * 0.013,
@@ -179,6 +187,9 @@ class _KeamananState extends State<Keamanan> {
                 ),
                 onPressed: () {
                   userController.changeEmail(email: email);
+                  setState(() {
+                    Navigator.of(context).pop();
+                  });
                 },
               ),
             ],
@@ -248,12 +259,16 @@ class _KeamananState extends State<Keamanan> {
                 style: TextButton.styleFrom(
                     textStyle: Theme.of(context).textTheme.labelLarge,
                     backgroundColor: Colors.green),
-                child: const Text(
+                child: Text(
                   'Simpan',
                   style: TextStyle(color: Colors.white),
                 ),
                 onPressed: () {
                   userController.changePassword(password: password);
+                  setState(() {
+                    Navigator.of(context).pop();
+                    authentication.logout();
+                  });
                 },
               ),
             ],

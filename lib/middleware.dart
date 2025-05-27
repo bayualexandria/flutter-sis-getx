@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sis/pages/intro.dart';
 import 'controllers/auth/authentication.dart';
-import 'pages/auth/login_page.dart';
 import 'pages/home.dart';
 
 class Middleware extends StatelessWidget {
@@ -14,7 +14,7 @@ class Middleware extends StatelessWidget {
         future: authentication.hasToken(),
         builder: (context, snapshoot) {
           if (!snapshoot.hasData) {
-            return const LoginPage();
+            return const Intro();
           }
           return const HomePage();
         });

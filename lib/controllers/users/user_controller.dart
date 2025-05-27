@@ -5,13 +5,15 @@ import 'package:get/get.dart';
 import 'package:heroicons/heroicons.dart';
 import 'package:sis/pages/auth/login_page.dart';
 import 'package:sis/pages/users/personal/profile.dart';
+import 'package:sis/pages/users/security/keamanan.dart';
 import '../auth/authentication.dart';
 import '../../utils/repositories/reporitories.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class UserController extends GetxController {
   late String? jenisKelamin;
   FlutterSecureStorage storage = const FlutterSecureStorage();
-
+  static final _googleSignIn = GoogleSignIn();
   Dio dio = Dio();
   final repositori = APIEndPoints().baseUrl;
   Authentication authentication = Authentication();
@@ -41,7 +43,6 @@ class UserController extends GetxController {
         return null;
       }
     } catch (e) {
-
       if (e.toString() == "Connection timed out") {
         Get.snackbar('message',
             "Koneksi ke server terputus! Mohon hubungi pihak administrator server.",
@@ -178,27 +179,43 @@ class UserController extends GetxController {
               validateStatus: (status) {
                 return status! < 500;
               }));
-      await dio.get('$repositori/logout',
-          options: Options(
-              headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Authorization': 'Bearer $token',
-              },
-              followRedirects: false,
-              validateStatus: (status) {
-                return status! < 500;
-              }));
-      await storage.deleteAll();
-      Get.off(const LoginPage());
-      Get.snackbar('message', response.data['message'],
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: const Color.fromARGB(255, 200, 255, 195),
-          colorText: Colors.green,
-          titleText: const Text(
-            'Pesan Success',
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
-          ));
+
+      if (response.data['status'] == 403) {
+        Get.off(const Keamanan());
+        Get.snackbar(
+            'message', 'Email yang anda masukan sudah terdaftar pada user lain',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: const Color.fromARGB(255, 255, 193, 193),
+            colorText: Colors.red,
+            titleText: const Text(
+              'Pesan Error',
+              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
+            ));
+      } else {
+        await dio.get('$repositori/logout',
+            options: Options(
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Accept': 'application/json',
+                  'Authorization': 'Bearer $token',
+                },
+                followRedirects: false,
+                validateStatus: (status) {
+                  return status! < 500;
+                }));
+        await storage.deleteAll();
+        await _googleSignIn.disconnect();
+        Get.off(const LoginPage());
+        Get.snackbar('message', response.data['message'],
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: const Color.fromARGB(255, 200, 255, 195),
+            colorText: Colors.green,
+            titleText: const Text(
+              'Pesan Success',
+              style:
+                  TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
+            ));
+      }
     } catch (e) {
       return e.printError();
     }
@@ -227,6 +244,14 @@ class UserController extends GetxController {
                   validateStatus: (status) {
                     return status! < 500;
                   }));
+      Get.snackbar('message', response.data['message'],
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: const Color.fromARGB(255, 200, 255, 195),
+          colorText: Colors.green,
+          titleText: const Text(
+            'Pesan Success',
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
+          ));
       await dio.get('$repositori/logout',
           options: Options(
               headers: {
@@ -239,15 +264,8 @@ class UserController extends GetxController {
                 return status! < 500;
               }));
       await storage.deleteAll();
+      await _googleSignIn.disconnect();
       Get.off(const LoginPage());
-      Get.snackbar('message', response.data['message'],
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: const Color.fromARGB(255, 200, 255, 195),
-          colorText: Colors.green,
-          titleText: const Text(
-            'Pesan Success',
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
-          ));
       return response.data;
     } catch (e) {
       return e.printError();

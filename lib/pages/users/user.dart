@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:heroicons/heroicons.dart';
@@ -146,8 +148,8 @@ class _ProfileState extends State<Profile> {
                         ],
                       ),
                       Container(
-                        height: size.height*0.1,
-                        width: size.width*0.2,
+                        height: size.height * 0.1,
+                        width: size.width * 0.2,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(39),
                             color: Colors.white),
@@ -378,33 +380,56 @@ class _ProfileState extends State<Profile> {
   }
 
   Future<void> _dialogBuilder(BuildContext context) {
+    bool loadingLogin = true;
     return showDialog<void>(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text('Logout'),
-            content: const Text(
-              'Apakah anda ingin keluar dari aplikasi!',
+            title: Text(loadingLogin == true ? 'Logout' : ''),
+            content: Text(
+              loadingLogin == true
+                  ? 'Apakah anda ingin keluar dari aplikasi!'
+                  : '',
             ),
             actions: <Widget>[
-              TextButton(
-                style: TextButton.styleFrom(
-                  textStyle: Theme.of(context).textTheme.labelLarge,
-                ),
-                child: const Text('Tidak'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-              TextButton(
-                style: TextButton.styleFrom(
-                  textStyle: Theme.of(context).textTheme.labelLarge,
-                ),
-                child: const Text('Ya'),
-                onPressed: () {
-                  authentication.logout();
-                },
-              ),
+              loadingLogin == true
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          style: TextButton.styleFrom(
+                            textStyle: Theme.of(context).textTheme.labelLarge,
+                          ),
+                          child: const Text(
+                            'Tidak',
+                            style: TextStyle(color: Colors.red),
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        TextButton(
+                          style: TextButton.styleFrom(
+                            textStyle: Theme.of(context).textTheme.labelLarge,
+                          ),
+                          child: const Text(
+                            'Ya',
+                            style: TextStyle(color: Colors.green),
+                          ),
+                          onPressed: () {
+                            loadingLogin == false;
+                            Timer(const Duration(seconds: 5), () {
+                              authentication.logout();
+                              setState(() {
+                                Navigator.of(context).pop();
+                              });
+                            });
+                          },
+                        ),
+                      ],
+                    )
+                  : const CircularProgressIndicator(
+                      color: Color.fromARGB(255, 118, 50, 228))
             ],
           );
         });

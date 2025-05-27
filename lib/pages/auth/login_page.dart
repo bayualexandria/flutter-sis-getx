@@ -17,6 +17,7 @@ class _LoginPageState extends State<LoginPage> {
 
   bool showPassword = false;
   bool loadingLogin = true;
+  bool loadingLoginGoogle = true;
 
   Authentication authentication = Get.put(Authentication());
 
@@ -66,7 +67,7 @@ class _LoginPageState extends State<LoginPage> {
               child: Container(
                 padding: EdgeInsets.symmetric(
                     horizontal: size.height * 0.02,
-                    vertical: size.width * 0.05),
+                    vertical: size.width * 0.08),
                 width: double.infinity,
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -95,40 +96,81 @@ class _LoginPageState extends State<LoginPage> {
                         height: size.height * 0.03,
                       ),
                       PasswordFieldLogin(controller: authentication.password),
-                      Container(
-                        margin: const EdgeInsets.symmetric(vertical: 40),
-                        width: size.width * 0.8,
-                        height: size.height * 0.07,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(29),
-                          child: ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                loadingLogin = false;
-                                Timer(const Duration(seconds: 5), () {
-                                  authentication.loginEndPoint();
+                      Column(
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.only(top: 30, bottom: 10),
+                            width: size.width * 0.8,
+                            height: size.height * 0.07,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(29),
+                              child: ElevatedButton(
+                                onPressed: () {
                                   setState(() {
-                                    loadingLogin = true;
+                                    loadingLogin = false;
+                                    Timer(const Duration(seconds: 5), () {
+                                      authentication.loginEndPoint();
+                                      setState(() {
+                                        loadingLogin = true;
+                                      });
+                                    });
                                   });
-                                });
-                              });
-                            },
-                            style: ElevatedButton.styleFrom(
-                                shape: const StadiumBorder(),
-                                backgroundColor:
-                                    const Color.fromARGB(82, 136, 93, 255)),
-                            child: loadingLogin == true
-                                ? const Text("Login",
-                                    style: TextStyle(
-                                        color:
-                                            Color.fromARGB(255, 180, 33, 224),
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18))
-                                : const CircularProgressIndicator(
-                                    color: Colors.white),
+                                },
+                                style: ElevatedButton.styleFrom(
+                                    shape: const StadiumBorder(),
+                                    backgroundColor:
+                                        const Color.fromARGB(82, 136, 93, 255)),
+                                child: loadingLogin == true
+                                    ? const Text("Login",
+                                        style: TextStyle(
+                                            color: Color.fromARGB(
+                                                255, 180, 33, 224),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18))
+                                    : const CircularProgressIndicator(
+                                        color: Colors.white),
+                              ),
+                            ),
                           ),
-                        ),
-                      )
+                          Text('________ atau ________',
+                              style: TextStyle(
+                                  color: Colors.grey.shade400,
+                                  fontWeight: FontWeight.bold)),
+                          authentication.loadingLogin == true
+                              ? TextButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      loadingLoginGoogle = false;
+                                      Timer(const Duration(seconds: 5), () {
+                                        authentication.loginGoogle();
+                                        setState(() {
+                                          loadingLoginGoogle = true;
+                                        });
+                                      });
+                                    });
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                          width: 2,
+                                          color: const Color.fromARGB(
+                                              255, 180, 33, 224)),
+                                      color: const Color.fromARGB(
+                                          255, 255, 255, 255),
+                                      borderRadius: BorderRadius.circular(100),
+                                    ),
+                                    width: size.width * 0.15,
+                                    child: Image(
+                                      image: AssetImage(
+                                          'assets/images/google.png'),
+                                      width: 50,
+                                    ),
+                                  ))
+                              : CircularProgressIndicator(
+                                  color: Color.fromARGB(255, 180, 33, 224))
+                        ],
+                      ),
                     ]))
                   ],
                 ),
