@@ -392,44 +392,38 @@ class _ProfileState extends State<Profile> {
                   : '',
             ),
             actions: <Widget>[
-              loadingLogin == true
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        TextButton(
-                          style: TextButton.styleFrom(
-                            textStyle: Theme.of(context).textTheme.labelLarge,
-                          ),
-                          child: const Text(
-                            'Tidak',
-                            style: TextStyle(color: Colors.red),
-                          ),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                        TextButton(
-                          style: TextButton.styleFrom(
-                            textStyle: Theme.of(context).textTheme.labelLarge,
-                          ),
-                          child: const Text(
-                            'Ya',
-                            style: TextStyle(color: Colors.green),
-                          ),
-                          onPressed: () {
-                            loadingLogin == false;
-                            Timer(const Duration(seconds: 5), () {
-                              authentication.logout();
-                              setState(() {
-                                Navigator.of(context).pop();
-                              });
-                            });
-                          },
-                        ),
-                      ],
-                    )
-                  : const CircularProgressIndicator(
-                      color: Color.fromARGB(255, 118, 50, 228))
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      textStyle: Theme.of(context).textTheme.labelLarge,
+                    ),
+                    child: const Text(
+                      'Tidak',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      textStyle: Theme.of(context).textTheme.labelLarge,
+                    ),
+                    child: const Text(
+                      'Ya',
+                      style: TextStyle(color: Colors.green),
+                    ),
+                    onPressed: () {
+                      authentication.logout();
+                      setState(() {
+                        Navigator.of(context).pop();
+                      });
+                    },
+                  ),
+                ],
+              )
             ],
           );
         });

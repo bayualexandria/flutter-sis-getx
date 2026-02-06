@@ -9,8 +9,7 @@ import 'package:shimmer/shimmer.dart';
 
 final List<String> imgList = [
   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTlogsxIACrSMcDYNSrv5_Fb1dqMCfMDhmn9JyB_xu72QRd5lZqBfAEW1184oBtoh4OPM0&usqp=CAU',
-  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRdeK9Uy2Dht8UMOxvrdu0vlAKX5F0WfHpAl0XhXgaOHn-1OpTBYK9zHtnl7IUeAV4Q5lQ&usqp=CAU',
-  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_zyke4tMI2xr2dZMnObSiRxHnbcP4wLwkoZvwlnZ2OxbfdND-Hp2tw7nVZIpXxpayJVw&usqp=CAU',
+  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQK11qj1jVYk51Z-h4XbwXJCp1sJcE7y3t0NA&s',
 ];
 final List<Widget> imageSliders = imgList
     .map((item) => ClipRRect(
@@ -128,6 +127,8 @@ class _HomeState extends State<Home> {
                           if (snapshot.hasData) {
                             final imageUrl =
                                 snapshot.data['siswa']['image_profile'];
+                            final String repositori =
+                                APIEndPoints().baseUrlImage;
                             return Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -140,7 +141,7 @@ class _HomeState extends State<Home> {
                                     backgroundImage: NetworkImage(
                                       imageUrl != null
                                           ? '$repositori$imageUrl'
-                                          : 'https://kemahasiswaan.umpp.ac.id/upload/default.png',
+                                          : 'https://api-sis.bayualexandria.site/assets/images/logo-pendidikan.png',
                                     ),
                                     radius: 24,
                                   ),
@@ -224,7 +225,7 @@ class _HomeState extends State<Home> {
                                   child: Column(
                                     children: [
                                       SizedBox(
-                                        width:size.width*0.35,
+                                        width: size.width * 0.35,
                                         child: Text(
                                           snapshot.data['nama_sekolah'],
                                           textAlign: TextAlign.center,

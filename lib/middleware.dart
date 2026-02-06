@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sis/pages/home/home.dart';
 import 'package:sis/pages/intro.dart';
 import 'controllers/auth/authentication.dart';
-import 'pages/home.dart';
 
 class Middleware extends StatelessWidget {
   const Middleware({super.key});
@@ -16,7 +16,7 @@ class Middleware extends StatelessWidget {
           if (!snapshoot.hasData) {
             return const Intro();
           }
-          return const HomePage();
+          return const Home();
         });
   }
 }

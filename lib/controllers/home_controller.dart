@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -24,10 +26,11 @@ class HomeController extends GetxController {
       } else {
         return null;
       }
-    } catch (e) {
-      if (e.toString() == "Connection timed out") {
-        Get.snackbar('message',
-            "Koneksi ke server terputus! Mohon hubungi pihak administrator server.",
+    } on DioException catch (e) {
+      print(e.response?.data['message']);
+      if (e.response?.data['message'] == "Service Unavailable") {
+        return Get.snackbar(
+            'message', "Server Down! Sistem API dalam perbaikan.",
             snackPosition: SnackPosition.BOTTOM,
             backgroundColor: const Color.fromARGB(255, 255, 193, 193),
             colorText: Colors.red,
@@ -36,7 +39,17 @@ class HomeController extends GetxController {
               style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
             ));
       }
-      throw Exception(e.toString());
+      if (e.response?.statusCode == 530) {
+        return Get.snackbar(
+            'message', "Server terputus atau koneksi internet tidak aktif!",
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: const Color.fromARGB(255, 255, 193, 193),
+            colorText: Colors.red,
+            titleText: const Text(
+              'Pesan Error',
+              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
+            ));
+      }
     }
   }
 }

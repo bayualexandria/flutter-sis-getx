@@ -108,7 +108,7 @@ class _LoginPageState extends State<LoginPage> {
                                 onPressed: () {
                                   setState(() {
                                     loadingLogin = false;
-                                    Timer(const Duration(seconds: 5), () {
+                                    Timer(const Duration(seconds: 3), () {
                                       authentication.loginEndPoint();
                                       setState(() {
                                         loadingLogin = true;
@@ -136,12 +136,12 @@ class _LoginPageState extends State<LoginPage> {
                               style: TextStyle(
                                   color: Colors.grey.shade400,
                                   fontWeight: FontWeight.bold)),
-                          authentication.loadingLogin == true
+                          loadingLoginGoogle == true
                               ? TextButton(
                                   onPressed: () {
                                     setState(() {
                                       loadingLoginGoogle = false;
-                                      Timer(const Duration(seconds: 5), () {
+                                      Timer(const Duration(seconds: 3), () {
                                         authentication.loginGoogle();
                                         setState(() {
                                           loadingLoginGoogle = true;

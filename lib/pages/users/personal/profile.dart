@@ -1,5 +1,7 @@
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:sis/controllers/users/user_controller.dart';
 import 'package:sis/pages/users/personal/components/text_area_field.dart';
 import 'package:sis/pages/users/personal/gender.dart';
@@ -20,6 +22,8 @@ class _PersonalState extends State<Personal> {
   final nama = TextEditingController();
   final noHp = TextEditingController();
   final alamat = TextEditingController();
+
+  XFile? imageFile;
 
   @override
   Widget build(BuildContext context) {
@@ -87,9 +91,7 @@ class _PersonalState extends State<Personal> {
                                 vertical: 30, horizontal: 15),
                             child: Column(
                               children: [
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                                Stack(
                                   children: [
                                     CircleAvatar(
                                       radius: 80,
@@ -104,6 +106,34 @@ class _PersonalState extends State<Personal> {
                                         radius: 78,
                                       ),
                                     ),
+                                    Positioned(
+                                        top: 120,
+                                        left: 100,
+                                        right: 0,
+                                        child: ElevatedButton(
+                                            onPressed: () {
+                                              getImageCamera();
+                                              if (userController.imageFile !=
+                                                  null) {
+                                                userController
+                                                    .updateImageProfile();
+                                              }
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                                backgroundColor:
+                                                    const Color.fromARGB(
+                                                        0, 255, 255, 255),
+                                                side: const BorderSide(
+                                                    width: 3,
+                                                    color: Color.fromARGB(
+                                                        0, 255, 255, 255)),
+                                                elevation: 0,
+                                                padding:
+                                                    const EdgeInsets.all(10)),
+                                            child: const Icon(Icons.camera_alt,
+                                                color: Color.fromARGB(
+                                                    255, 119, 119, 119),
+                                                size: 30))),
                                   ],
                                 ),
                                 SizedBox(
@@ -137,7 +167,6 @@ class _PersonalState extends State<Personal> {
                                       color: Colors.black,
                                       fontWeight: FontWeight.w500,
                                     ),
-                                   
                                     onChanged: (value) => value != nama,
                                     controller: nama,
                                     enabled: true,
@@ -238,4 +267,16 @@ class _PersonalState extends State<Personal> {
               ),
             )));
   }
+}
+
+getImageCamera() async {
+  final picker = ImagePicker();
+  await picker.pickImage(source: ImageSource.gallery).then((value) {
+    if (value != null) {
+      Get.find<UserController>().imageFile = value;
+      Get.find<UserController>().updateImageProfile();
+    } else {
+      return;
+    }
+  });
 }

@@ -17,7 +17,6 @@ class Authentication extends GetxController {
   Dio dio = Dio();
   final repositori = APIEndPoints().baseUrl;
   static final _googleSignIn = GoogleSignIn();
-  bool loadingLogin = true;
 
   Future<void> loginEndPoint() async {
     Map body = {'username': username.text, 'password': password.text};
@@ -30,6 +29,7 @@ class Authentication extends GetxController {
               validateStatus: (status) {
                 return status! < 500;
               }));
+      print(response.data);
 
       if (response.data['status'] == 401) {
         final messages = response.data['message'];
@@ -66,7 +66,17 @@ class Authentication extends GetxController {
       Get.off(const HomePage());
       return response.data;
     } on DioException catch (e) {
-      if (e.message != null) {
+      if (e.response?.data['message'] == "Service Unavailable") {
+        Get.snackbar('message', "Server Down! Sistem API dalam perbaikan.",
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: const Color.fromARGB(255, 255, 193, 193),
+            colorText: Colors.red,
+            titleText: const Text(
+              'Pesan Error',
+              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
+            ));
+      }
+      if (e.response?.statusCode == 530) {
         Get.snackbar(
             'message', "Server terputus atau koneksi internet tidak aktif!",
             snackPosition: SnackPosition.BOTTOM,
@@ -77,6 +87,7 @@ class Authentication extends GetxController {
               style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
             ));
       }
+      throw Exception(e.toString());
     }
   }
 
@@ -117,7 +128,7 @@ class Authentication extends GetxController {
               return status! < 500;
             }));
     await storage.deleteAll();
-    await _googleSignIn.disconnect();
+    await _googleSignIn.signOut();
     await DefaultCacheManager().emptyCache();
     Get.off(const LoginPage());
     return true;
@@ -128,7 +139,6 @@ class Authentication extends GetxController {
     final id = user?.id;
     final name = user?.displayName;
     final email = user?.email;
-    loadingLogin = false;
 
     try {
       final response =
@@ -144,8 +154,8 @@ class Authentication extends GetxController {
                   }));
 
       if (response.data['status'] == 403) {
-        await _googleSignIn.disconnect();
-        loadingLogin = true;
+        await _googleSignIn.signOut();
+
         Get.snackbar('message', response.data['message'],
             snackPosition: SnackPosition.BOTTOM,
             backgroundColor: const Color.fromARGB(255, 255, 193, 193),
@@ -159,17 +169,13 @@ class Authentication extends GetxController {
       await storage.write(key: 'token', value: response.data['accessToken']);
       await storage.write(
           key: 'username', value: response.data['user']['username']);
-      loadingLogin = true;
+
       Get.off(const HomePage());
       return response.data;
     } on DioException catch (e) {
       await _googleSignIn.signOut();
-      print('error akun google');
-      print(e.message);
-      if (e.message != null) {
-        loadingLogin = true;
-        Get.snackbar('message',
-            "User belum terdaftar! Silahkan hubungi administrator sekolah.",
+      if (e.response?.data['message'] == "Service Unavailable") {
+        Get.snackbar('message', "Server Down! Sistem API dalam perbaikan.",
             snackPosition: SnackPosition.BOTTOM,
             backgroundColor: const Color.fromARGB(255, 255, 193, 193),
             colorText: Colors.red,
@@ -178,8 +184,18 @@ class Authentication extends GetxController {
               style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
             ));
       }
-
-      return null;
+      if (e.response?.statusCode == 530) {
+        Get.snackbar(
+            'message', "Server terputus atau koneksi internet tidak aktif!",
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: const Color.fromARGB(255, 255, 193, 193),
+            colorText: Colors.red,
+            titleText: const Text(
+              'Pesan Error',
+              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
+            ));
+      }
+      throw Exception(e.toString());
     }
   }
 }
