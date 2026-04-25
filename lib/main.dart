@@ -21,6 +21,7 @@ void main() async {
   // SecurityContext.defau5ltContext
   //     .setTrustedCertificatesBytes(data.buffer.asUint8List());
   HttpOverrides.global = MyHttpOverrides();
+
   runApp(const MyApp());
 }
 
@@ -34,10 +35,18 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return const ConnectionNotifier(
+    return ConnectionNotifier(
         connectionNotificationOptions: ConnectionNotificationOptions(
             alignment: AlignmentDirectional.topCenter, height: 40),
         child: GetMaterialApp(
+          theme: ThemeData(
+            useMaterial3: true,
+            fontFamily: 'Poppins',
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: const Color(0xff6366F1),
+            ),
+            scaffoldBackgroundColor: const Color(0xffF5F7FB),
+          ),
           debugShowCheckedModeBanner: false,
           //  theme: ThemeData(fontFamily: 'Montserrat'),
           home: SplashScreen(),

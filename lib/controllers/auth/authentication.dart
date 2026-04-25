@@ -29,7 +29,7 @@ class Authentication extends GetxController {
               validateStatus: (status) {
                 return status! < 500;
               }));
-      print(response.data);
+      print('pesan response $response');
 
       if (response.data['status'] == 401) {
         final messages = response.data['message'];
@@ -87,7 +87,44 @@ class Authentication extends GetxController {
               style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
             ));
       }
-      throw Exception(e.toString());
+      final errors = e.response?.statusCode;
+
+      Get.snackbar('message', "Link URL API tidak valid!",
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: const Color.fromARGB(255, 255, 193, 193),
+          borderRadius: 12,
+          margin: EdgeInsets.all(16),
+          duration: Duration(seconds: 2),
+          colorText: Colors.white,
+
+          // efek floating
+          snackStyle: SnackStyle.FLOATING,
+
+          // animasi masuk
+          animationDuration: Duration(milliseconds: 500),
+
+          // blur + transparan biar modern
+          backgroundGradient: LinearGradient(
+            colors: [const Color.fromARGB(255, 255, 114, 114), Colors.red],
+          ),
+
+          // efek icon seperti SweetAlert
+          icon: Icon(Icons.close, color: Colors.white),
+
+          // shadow biar keliatan “ngambang”
+          boxShadows: [
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 10,
+              offset: Offset(0, 5),
+            )
+          ],
+          titleText: const Text(
+            'Pesan Error',
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+          ));
+
+      // throw Exception(e.toString());
     }
   }
 

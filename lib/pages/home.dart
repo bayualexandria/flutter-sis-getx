@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:custom_navigation_bar/custom_navigation_bar.dart';
 import 'package:heroicons/heroicons.dart';
-import './home/home.dart';
+import 'package:sis/pages/home/home.dart';
 import './lists/list.dart';
 import './messages/message.dart';
 import './users/user.dart';
@@ -23,16 +23,44 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    const primaryColor = Color(0xff6366F1); // indigo modern
+    const secondaryColor = Color(0xffA5B4FC);
     return Scaffold(
-        body: bodyWidget.elementAt(_selectedIndex),
-        bottomNavigationBar: CustomNavigationBar(
-          items: buildNavigation,
-          onTap: _onItemTapped,
-          currentIndex: _selectedIndex,
-          selectedColor: const Color.fromARGB(157, 183, 0, 255),
-          unSelectedColor: const Color.fromARGB(218, 55, 0, 255),
-          strokeColor: const Color.fromARGB(157, 183, 0, 255),
-        ));
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 300),
+        transitionBuilder: (child, animation) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+        child: pages[_selectedIndex],
+      ),
+      bottomNavigationBar: Container(
+        margin: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 20,
+              offset: const Offset(0, 5),
+            )
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: CustomNavigationBar(
+            items: buildNavigation,
+            currentIndex: _selectedIndex,
+            onTap: _onItemTapped,
+            selectedColor: primaryColor,
+            unSelectedColor: Colors.grey,
+            backgroundColor: Colors.white,
+            iconSize: 28,
+            strokeColor: Colors.transparent,
+            scaleFactor: 0.2, // animasi zoom
+          ),
+        ),
+      ),
+    );
   }
 
   List<CustomNavigationBarItem> get buildNavigation {
@@ -44,23 +72,35 @@ class _HomePageState extends State<HomePage> {
     ];
   }
 
-  List<Widget> get bodyWidget {
-    return <Widget>[
-      const Home(),
-      const ListPage(),
+  late final List<Widget> pages;
+
+  @override
+  void initState() {
+    super.initState();
+    pages = [
+      Home(),
+      MenuMapelPage(),
       const Message(),
-      const Profile()
+      const Profile(),
     ];
   }
 
-  CustomNavigationBarItem itemNav(
-      {required HeroIcons icon, required String title}) {
+  CustomNavigationBarItem itemNav({
+    required HeroIcons icon,
+    required String title,
+  }) {
     return CustomNavigationBarItem(
-        icon: HeroIcon(icon),
-        title: Text(
-          title,
-          style: const TextStyle(color: Color.fromARGB(157, 183, 0, 255)),
-        ));
+      icon: HeroIcon(icon, style: HeroIconStyle.outline),
+      selectedIcon: HeroIcon(
+        icon,
+        style: HeroIconStyle.solid,
+        color: const Color(0xff6366F1),
+      ),
+      title: Text(
+        title,
+        style: const TextStyle(fontSize: 12),
+      ),
+    );
   }
 
   // AppBar buildAppBar() {

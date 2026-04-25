@@ -21,344 +21,127 @@ class _ProfileState extends State<Profile> {
   Authentication authentication = Get.put(Authentication());
   UserController userController = Get.put(UserController());
   final repositori = APIEndPoints().baseUrlImage;
+
+  late Future userFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    userFuture = userController.user();
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Stack(
       children: [
         Container(
-          width: double.infinity,
-          height: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
           decoration: const BoxDecoration(
-              gradient: LinearGradient(begin: Alignment.topCenter, colors: [
-            Color.fromARGB(157, 183, 0, 255),
-            Color.fromARGB(218, 55, 0, 255),
-            Color.fromARGB(255, 0, 140, 255),
-          ])),
-        ),
-        FutureBuilder(
+            gradient: LinearGradient(
+              colors: [Color(0xff6366F1), Color(0xff8B5CF6)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+          child: FutureBuilder(
             future: userController.user(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 final imageUrl = snapshot.data['siswa']['image_profile'];
-                return RefreshIndicator(
-                  onRefresh: () {
-                    return userController.user();
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                        top: 50, left: 20, right: 20, bottom: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              height: size.height * 0.025,
-                            ),
-                            Text(
-                              snapshot.data['siswa']['nama'],
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                  fontSize: 20),
-                            ),
-                            Text(
-                              snapshot.data['siswa']['nis'],
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                  fontSize: 14),
-                            ),
-                            Text(
-                              snapshot.data['email'],
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.normal,
-                                  color: Colors.white,
-                                  fontSize: 10),
-                            )
-                          ],
+
+                return Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 35,
+                      backgroundColor: Colors.white,
+                      child: CircleAvatar(
+                        radius: 32,
+                        backgroundImage: NetworkImage(
+                          imageUrl != null
+                              ? '$repositori$imageUrl'
+                              : 'https://kemahasiswaan.umpp.ac.id/upload/default.png',
                         ),
-                        CircleAvatar(
-                          radius: 40,
-                          backgroundColor:
-                              const Color.fromARGB(255, 255, 11, 243),
-                          child: CircleAvatar(
-                            backgroundImage: NetworkImage(
-                              imageUrl != null
-                                  ? '$repositori$imageUrl'
-                                  : 'https://kemahasiswaan.umpp.ac.id/upload/default.png',
-                            ),
-                            radius: 39,
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
-                );
-              }
-              return Shimmer.fromColors(
-                baseColor: Colors.grey.shade300,
-                highlightColor: Colors.grey.shade100,
-                enabled: true,
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                      top: 50, left: 20, right: 20, bottom: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
+                    const SizedBox(width: 15),
+                    Expanded(
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(
-                            height: size.height * 0.025,
+                          Text(
+                            snapshot.data['siswa']['nama'],
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18),
                           ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 13, horizontal: 70),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
-                                color: Colors.white),
+                          Text(
+                            snapshot.data['email'],
+                            style: const TextStyle(color: Colors.white70),
                           ),
-                          SizedBox(
-                            height: size.height * 0.002,
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 8, horizontal: 70),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
-                                color: Colors.white),
-                          ),
-                          SizedBox(
-                            height: size.height * 0.0025,
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 5, horizontal: 70),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
-                                color: Colors.white),
-                          )
                         ],
                       ),
-                      Container(
-                        height: size.height * 0.1,
-                        width: size.width * 0.2,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(39),
-                            color: Colors.white),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            }),
+                    ),
+                  ],
+                );
+              }
+              return const SizedBox();
+            },
+          ),
+        ),
         Padding(
           padding: const EdgeInsets.only(
-            top: 180,
+            top: 130,
           ),
           child: Container(
-            padding: EdgeInsets.symmetric(
-                horizontal: size.height * 0.02, vertical: size.width * 0.05),
-            width: double.infinity,
+            margin: const EdgeInsets.only(top: 30),
             height: double.infinity,
-            decoration: const BoxDecoration(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(30)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 15,
+                )
+              ],
             ),
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  // Profile
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context, rootNavigator: false).push(
-                          MaterialPageRoute(
-                              builder: (context) => const Personal(),
-                              maintainState: false));
+                  menuItem(
+                    icon: Icons.person,
+                    title: "Personal",
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (_) => const Personal()));
                     },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            const HeroIcon(HeroIcons.user,
-                                color: Color.fromARGB(255, 255, 11, 243)),
-                            SizedBox(
-                              width: size.width * 0.02,
-                            ),
-                            const Text(
-                              'Personal',
-                              style: TextStyle(
-                                  color: Color.fromARGB(255, 255, 11, 243),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w800),
-                            ),
-                          ],
-                        ),
-                        const HeroIcon(
-                          HeroIcons.chevronRight,
-                          color: Color.fromARGB(255, 255, 11, 243),
-                        )
-                      ],
-                    ),
                   ),
-                  // Menu
-                  TextButton(
-                    onPressed: () {},
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            const HeroIcon(HeroIcons.bars3,
-                                color: Color.fromARGB(255, 255, 11, 243)),
-                            SizedBox(
-                              width: size.width * 0.02,
-                            ),
-                            const Text(
-                              'Pilihan',
-                              style: TextStyle(
-                                  color: Color.fromARGB(255, 255, 11, 243),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w800),
-                            ),
-                          ],
-                        ),
-                        const HeroIcon(
-                          HeroIcons.chevronRight,
-                          color: Color.fromARGB(255, 255, 11, 243),
-                        )
-                      ],
-                    ),
-                  ),
-                  // Security
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => Keamanan()));
+                  menuItem(
+                    icon: Icons.lock,
+                    title: "Keamanan",
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (_) => Keamanan()));
                     },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            const HeroIcon(HeroIcons.lockClosed,
-                                color: Color.fromARGB(255, 255, 11, 243)),
-                            SizedBox(
-                              width: size.width * 0.02,
-                            ),
-                            const Text(
-                              'Keamanan',
-                              style: TextStyle(
-                                  color: Color.fromARGB(255, 255, 11, 243),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w800),
-                            ),
-                          ],
-                        ),
-                        const HeroIcon(
-                          HeroIcons.chevronRight,
-                          color: Color.fromARGB(255, 255, 11, 243),
-                        )
-                      ],
-                    ),
                   ),
-                  // Setting
-                  TextButton(
-                    onPressed: () {},
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            const HeroIcon(HeroIcons.wrench,
-                                color: Color.fromARGB(255, 255, 11, 243)),
-                            SizedBox(
-                              width: size.width * 0.02,
-                            ),
-                            const Text(
-                              'Pengaturan',
-                              style: TextStyle(
-                                  color: Color.fromARGB(255, 255, 11, 243),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w800),
-                            ),
-                          ],
-                        ),
-                        const HeroIcon(
-                          HeroIcons.chevronRight,
-                          color: Color.fromARGB(255, 255, 11, 243),
-                        )
-                      ],
-                    ),
+                  menuItem(
+                    icon: Icons.settings,
+                    title: "Pengaturan",
+                    onTap: () {},
                   ),
-                  // Help
-                  TextButton(
-                    onPressed: () {},
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            const HeroIcon(HeroIcons.exclamationCircle,
-                                color: Color.fromARGB(255, 255, 11, 243)),
-                            SizedBox(
-                              width: size.width * 0.02,
-                            ),
-                            const Text(
-                              'Bantuan',
-                              style: TextStyle(
-                                  color: Color.fromARGB(255, 255, 11, 243),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w800),
-                            ),
-                          ],
-                        ),
-                        const HeroIcon(
-                          HeroIcons.chevronRight,
-                          color: Color.fromARGB(255, 255, 11, 243),
-                        )
-                      ],
-                    ),
+                  menuItem(
+                    icon: Icons.help,
+                    title: "Bantuan",
+                    onTap: () {},
                   ),
-                  // Logout
-                  TextButton(
-                    onPressed: () {
-                      _dialogBuilder(context);
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            const HeroIcon(HeroIcons.arrowLeftStartOnRectangle,
-                                color: Color.fromARGB(255, 255, 11, 243)),
-                            SizedBox(
-                              width: size.width * 0.02,
-                            ),
-                            const Text(
-                              'Keluar',
-                              style: TextStyle(
-                                  color: Color.fromARGB(255, 255, 11, 243),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w800),
-                            ),
-                          ],
-                        ),
-                        const HeroIcon(
-                          HeroIcons.chevronRight,
-                          color: Color.fromARGB(255, 255, 11, 243),
-                        )
-                      ],
-                    ),
+                  menuItem(
+                    icon: Icons.logout,
+                    title: "Keluar",
+                    onTap: () => _dialogBuilder(context),
                   ),
                   SizedBox(
                     height: size.height * 0.1,
@@ -376,6 +159,32 @@ class _ProfileState extends State<Profile> {
           ),
         )
       ],
+    );
+  }
+
+  Widget menuItem({
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.grey[50],
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: const Color(0xffEEF2FF),
+          child: Icon(icon, color: Color(0xff6366F1)),
+        ),
+        title: Text(
+          title,
+          style: const TextStyle(fontWeight: FontWeight.w500),
+        ),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: onTap,
+      ),
     );
   }
 

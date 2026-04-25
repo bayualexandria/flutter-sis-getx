@@ -14,7 +14,7 @@ class _SplashScreenState extends State<SplashScreen> {
   final Authentication authentication = Get.put(Authentication());
   Future<void> initializeSettings() async {
     await Future.delayed(const Duration(seconds: 10));
-    authentication.hasToken();
+    // authentication.hasToken();
 
     //Simulate other services for 3 seconds
   }
@@ -24,7 +24,6 @@ class _SplashScreenState extends State<SplashScreen> {
     return FutureBuilder(
       future: initializeSettings(),
       builder: (context, snapshot) {
-
         if (snapshot.connectionState == ConnectionState.waiting) {
           return waitingView();
         } else {

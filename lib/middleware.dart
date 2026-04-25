@@ -13,10 +13,11 @@ class Middleware extends StatelessWidget {
     return FutureBuilder(
         future: authentication.hasToken(),
         builder: (context, snapshoot) {
+          Future.delayed(const Duration(seconds: 0));
           if (!snapshoot.hasData) {
             return const Intro();
           }
-          return const Home();
+          return Home();
         });
   }
 }

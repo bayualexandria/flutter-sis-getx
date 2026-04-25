@@ -368,7 +368,7 @@ class UserController extends GetxController {
               style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
             ));
       }
-      throw Exception(e.toString());
+      return;
     }
   }
 

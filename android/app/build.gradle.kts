@@ -1,35 +1,23 @@
 plugins {
-    id "com.android.application"
-    id "kotlin-android"
+    id("com.android.application")
+    id("kotlin-android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
-    id "dev.flutter.flutter-gradle-plugin"
+    id("dev.flutter.flutter-gradle-plugin")
 }
-subprojects {
-    afterEvaluate {
-        if (it.name == "flutter_inappwebview_android") {
-            it.android.buildTypes.release.minifyEnabled = false
-        }
-    }
-}
+
 android {
     namespace = "com.example.sis"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8
+        jvmTarget = JavaVersion.VERSION_17.toString()
     }
-
-//  Start  Tambahan
-    dependencies {
-        implementation 'com.android.support:multidex:2.0.1'
-    }
-//    End Tambahan
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
@@ -37,31 +25,16 @@ android {
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
-        targetSdk = 34
+        targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
-//        Tambahan
-        multiDexEnabled true
-
-    }
-
-
-    signingConfigs {
-        debug {
-            storeFile file("upload-keystore.jks")
-            storePassword "android"
-            keyPassword "android"
-            keyAlias "androiddebugkey"
-        }
     }
 
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.debug
-//            Tambahan
-            crunchPngs false
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
 }

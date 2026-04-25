@@ -5,11 +5,10 @@ import 'package:sis/controllers/home_controller.dart';
 import 'package:sis/utils/repositories/reporitories.dart';
 import '../../controllers/users/user_controller.dart';
 import 'package:heroicons/heroicons.dart';
-import 'package:shimmer/shimmer.dart';
 
 final List<String> imgList = [
-  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTlogsxIACrSMcDYNSrv5_Fb1dqMCfMDhmn9JyB_xu72QRd5lZqBfAEW1184oBtoh4OPM0&usqp=CAU',
-  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQK11qj1jVYk51Z-h4XbwXJCp1sJcE7y3t0NA&s',
+  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTlBQ29NNI2Hd1F4rYzkjj6p0tEqR1lyWbEYQ&s',
+  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyUVma9B3iWxEJPRmq8p3UW0b5w-hgHO8gqg&s',
 ];
 final List<Widget> imageSliders = imgList
     .map((item) => ClipRRect(
@@ -25,11 +24,11 @@ final List<Widget> imageSliders = imgList
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      Color.fromARGB(200, 0, 0, 0),
-                      Color.fromARGB(0, 0, 0, 0)
+                      Color(0xff6a11cb),
+                      Color(0xff2575fc),
                     ],
-                    begin: Alignment.bottomCenter,
-                    end: Alignment.topCenter,
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
                 ),
                 padding: const EdgeInsets.symmetric(
@@ -54,7 +53,16 @@ class _HomeState extends State<Home> {
   final userController = Get.put(UserController());
   final homeController = Get.put(HomeController());
   final repositori = APIEndPoints().baseUrlImage;
+  late Future profileFuture;
+  late Future userFuture;
+
   @override
+  void initState() {
+    super.initState();
+    profileFuture = homeController.profileSchool();
+    userFuture = userController.user();
+  }
+
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Container(
@@ -76,115 +84,54 @@ class _HomeState extends State<Home> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                padding: const EdgeInsets.only(
-                  top: 10,
-                  left: 1,
-                  right: 1,
+                padding: const EdgeInsets.all(20),
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Color(0xff667eea),
+                      Color(0xff764ba2),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.vertical(
+                    bottom: Radius.circular(30),
+                  ),
                 ),
-                width: double.infinity,
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Selamat Datang Di \nSistem Informasi Siswa",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                              color: Colors.white),
-                        ),
-                        FutureBuilder(
-                            future: homeController.profileSchool(),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Selamat Datang 👋",
+                            style: TextStyle(color: Colors.white70),
+                          ),
+                          const SizedBox(height: 4),
+                          FutureBuilder(
+                            future: userFuture,
                             builder: (context, snapshot) {
                               if (snapshot.hasData) {
-                                return Text(snapshot.data['nama_sekolah'],
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 15,
-                                        color: Colors.white));
-                              }
-                              return Shimmer.fromColors(
-                                baseColor: Colors.grey.shade300,
-                                highlightColor: Colors.grey.shade100,
-                                enabled: true,
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 10, horizontal: 70),
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(2),
-                                      color: Colors.white),
-                                ),
-                              );
-                            })
-                      ],
-                    ),
-                    FutureBuilder(
-                        future: userController.user(),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            final imageUrl =
-                                snapshot.data['siswa']['image_profile'];
-                            final String repositori =
-                                APIEndPoints().baseUrlImage;
-                            return Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                CircleAvatar(
-                                  radius: 25,
-                                  backgroundColor:
-                                      const Color.fromARGB(255, 255, 11, 243),
-                                  child: CircleAvatar(
-                                    backgroundImage: NetworkImage(
-                                      imageUrl != null
-                                          ? '$repositori$imageUrl'
-                                          : 'https://api-sis.bayualexandria.site/assets/images/logo-pendidikan.png',
-                                    ),
-                                    radius: 24,
-                                  ),
-                                ),
-                                Text(
-                                  snapshot.data['siswa']['nama'] ?? '',
+                                return Text(
+                                  snapshot.data['siswa']['nama'],
                                   style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 10,
-                                      color: Colors.white),
-                                )
-                              ],
-                            );
-                          }
-                          return Shimmer.fromColors(
-                            baseColor: Colors.grey.shade300,
-                            highlightColor: Colors.grey.shade100,
-                            enabled: true,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 20, horizontal: 20),
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(25),
-                                      color: Colors.white),
-                                ),
-                                SizedBox(
-                                  height: size.height * 0.005,
-                                ),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 3, horizontal: 24),
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(2),
-                                      color: Colors.white),
-                                )
-                              ],
-                            ),
-                          );
-                        }),
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                );
+                              }
+                              return Container(
+                                  height: 15,
+                                  width: 120,
+                                  color: Colors.white24);
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Icon(Icons.notifications, color: Colors.white),
                   ],
                 ),
               ),
@@ -202,129 +149,81 @@ class _HomeState extends State<Home> {
                 height: size.height * 0.01,
               ),
               Container(
-                padding: const EdgeInsets.all(20),
-                width: double.infinity,
+                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    color: Colors.white),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 5),
+                    )
+                  ],
+                ),
                 child: Row(
                   children: [
-                    const Image(
-                      image: AssetImage('assets/images/logo-pendidikan.png'),
-                      width: 60,
+                    const CircleAvatar(
+                      radius: 30,
+                      backgroundColor: Color(0xffeef2ff),
+                      child: Icon(Icons.school, color: Colors.blue),
                     ),
-                    FutureBuilder(
-                        future: homeController.profileSchool(),
+                    const SizedBox(width: 15),
+                    Expanded(
+                      child: FutureBuilder(
+                        future: profileFuture,
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
-                            return Row(
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 0, horizontal: 20),
-                                  child: Column(
-                                    children: [
-                                      SizedBox(
-                                        width: size.width * 0.35,
-                                        child: Text(
-                                          snapshot.data['nama_sekolah'],
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w900,
-                                              fontSize: 20,
-                                              color: Colors.black),
-                                        ),
-                                      ),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            "No Telephone : ",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.normal,
-                                                fontSize: 12,
-                                                color: Colors.black),
-                                          ),
-                                          Text(snapshot.data['no_telp'],
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.normal,
-                                                  fontSize: 12,
-                                                  color: Colors.black)),
-                                        ],
-                                      )
-                                    ],
+                                Text(
+                                  snapshot.data['nama_sekolah'],
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
                                   ),
                                 ),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 25, horizontal: 2),
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(2),
-                                      color: Color.fromARGB(255, 76, 76, 76)),
+                                Text(
+                                  "Akreditasi ${snapshot.data['akreditasi']}",
+                                  style: const TextStyle(color: Colors.grey),
                                 ),
-                                SizedBox(
-                                  width: size.width * 0.03,
-                                ),
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Text('Akreditasi',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.normal,
-                                            fontSize: 12,
-                                            color: Colors.black)),
-                                    Text(snapshot.data['akreditasi'],
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w900,
-                                            fontSize: 24,
-                                            color: snapshot
-                                                        .data['akreditasi'] ==
-                                                    'A'
-                                                ? Color.fromARGB(
-                                                    255, 48, 253, 2)
-                                                : (snapshot.data[
-                                                            'akreditasi'] ==
-                                                        'B'
-                                                    ? Color.fromARGB(
-                                                        255, 0, 60, 255)
-                                                    : Color.fromARGB(
-                                                        255, 255, 0, 0))))
-                                  ],
-                                )
                               ],
                             );
                           }
-                          return Text("");
-                        })
+                          return Container(height: 20, color: Colors.grey[200]);
+                        },
+                      ),
+                    )
                   ],
                 ),
               ),
               SizedBox(
                 height: size.height * 0.03,
               ),
-              const Text(
-                'Informasi',
-                style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 15,
-                    color: Colors.white),
-              ),
-              SizedBox(
-                height: size.height * 0.01,
-              ),
-              CarouselSlider(
-                items: imageSliders,
-                carouselController: _controller,
-                options: CarouselOptions(
-                    autoPlay: true,
-                    enlargeCenterPage: true,
-                    aspectRatio: 2.0,
-                    onPageChanged: (index, reason) {
-                      setState(() {
-                        _current = index;
-                      });
-                    }),
-              ),
+              // const Text(
+              //   'Informasi',
+              //   style: TextStyle(
+              //       fontWeight: FontWeight.w500,
+              //       fontSize: 15,
+              //       color: Colors.white),
+              // ),
+              // SizedBox(
+              //   height: size.height * 0.01,
+              // ),
+              // CarouselSlider(
+              //   items: imageSliders,
+              //   carouselController: _controller,
+              //   options: CarouselOptions(
+              //       autoPlay: true,
+              //       enlargeCenterPage: true,
+              //       aspectRatio: 2.0,
+              //       onPageChanged: (index, reason) {
+              //         setState(() {
+              //           _current = index;
+              //         });
+              //       }),
+              // ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: imgList.asMap().entries.map((entry) {
@@ -367,120 +266,34 @@ class _HomeState extends State<Home> {
                     color: Colors.white),
                 child: Column(
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
+                    Wrap(
+                      spacing: 20,
+                      runSpacing: 20,
+                      children: const [
                         MenuIcon(
-                          size: size,
-                          icon: const HeroIcon(
-                            HeroIcons.users,
-                            size: 25,
-                            color: Color.fromARGB(255, 3, 141, 221),
-                          ),
-                          titleSub: "Siswa",
-                        ),
+                            icon: HeroIcon(HeroIcons.users), titleSub: "Siswa"),
                         MenuIcon(
-                          size: size,
-                          icon: const HeroIcon(
-                            HeroIcons.buildingOffice2,
-                            size: 25,
-                            color: Color.fromARGB(255, 163, 255, 87),
-                          ),
-                          titleSub: "Sekolah",
-                        ),
+                            icon: HeroIcon(HeroIcons.buildingOffice2),
+                            titleSub: "Sekolah"),
                         MenuIcon(
-                          size: size,
-                          icon: const HeroIcon(
-                            HeroIcons.academicCap,
-                            size: 25,
-                            color: Color.fromARGB(255, 193, 106, 252),
-                          ),
-                          titleSub: "Kelulusan",
-                        ),
+                            icon: HeroIcon(HeroIcons.academicCap),
+                            titleSub: "Kelulusan"),
                         MenuIcon(
-                          size: size,
-                          icon: const HeroIcon(
-                            HeroIcons.calendar,
-                            size: 25,
-                            color: Color.fromARGB(255, 221, 241, 38),
-                          ),
-                          titleSub: "Jadwal Ujian",
-                        ),
+                            icon: HeroIcon(HeroIcons.calendar),
+                            titleSub: "Jadwal"),
+                        MenuIcon(
+                            icon: HeroIcon(HeroIcons.creditCard),
+                            titleSub: "Hasil"),
+                        MenuIcon(
+                            icon: HeroIcon(HeroIcons.chatBubbleLeftEllipsis),
+                            titleSub: "Mapel"),
+                        MenuIcon(
+                            icon: HeroIcon(HeroIcons.user), titleSub: "Guru"),
+                        MenuIcon(
+                            icon: HeroIcon(HeroIcons.wallet),
+                            titleSub: "Kelas"),
                       ],
                     ),
-                    SizedBox(
-                      height: size.height * 0.05,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        MenuIcon(
-                          size: size,
-                          icon: const HeroIcon(
-                            HeroIcons.creditCard,
-                            size: 25,
-                            color: Color.fromARGB(255, 41, 196, 216),
-                          ),
-                          titleSub: "Hasil Ujian",
-                        ),
-                        MenuIcon(
-                          size: size,
-                          icon: const HeroIcon(
-                            HeroIcons.chatBubbleLeftEllipsis,
-                            size: 25,
-                            color: Color.fromARGB(255, 33, 137, 206),
-                          ),
-                          titleSub: "Mapel",
-                        ),
-                        MenuIcon(
-                          size: size,
-                          icon: const HeroIcon(
-                            HeroIcons.user,
-                            size: 25,
-                            color: Color.fromARGB(255, 231, 51, 51),
-                          ),
-                          titleSub: "Guru",
-                        ),
-                        MenuIcon(
-                          size: size,
-                          icon: const HeroIcon(
-                            HeroIcons.wallet,
-                            size: 25,
-                            color: Color.fromARGB(255, 38, 143, 241),
-                          ),
-                          titleSub: "Kelas",
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: size.height * 0.05,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        MenuIcon(
-                          size: size,
-                          icon: const HeroIcon(
-                            HeroIcons.clipboard,
-                            size: 25,
-                            color: Color.fromARGB(255, 216, 41, 70),
-                          ),
-                          titleSub: "Pengumuman",
-                        ),
-                        SizedBox(
-                          width: size.width * 0.03,
-                        ),
-                        MenuIcon(
-                          size: size,
-                          icon: const HeroIcon(
-                            HeroIcons.exclamationCircle,
-                            size: 25,
-                            color: Color.fromARGB(255, 137, 33, 206),
-                          ),
-                          titleSub: "Informasi",
-                        ),
-                      ],
-                    )
                   ],
                 ),
               ),
@@ -494,31 +307,43 @@ class _HomeState extends State<Home> {
 }
 
 class MenuIcon extends StatelessWidget {
-  const MenuIcon(
-      {super.key,
-      required this.size,
-      required this.icon,
-      required this.titleSub});
+  const MenuIcon({
+    super.key,
+    required this.icon,
+    required this.titleSub,
+  });
 
-  final Size size;
   final HeroIcon icon;
-  final titleSub;
+  final String titleSub;
+
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: size.width * 0.2,
+    return GestureDetector(
+      onTap: () {},
       child: Column(
         children: [
-          SizedBox(width: double.infinity, child: icon),
-          SizedBox(
-            width: double.infinity,
-            child: Text(
-              titleSub,
-              style: const TextStyle(
-                  fontWeight: FontWeight.normal,
-                  fontSize: 10,
-                  color: Color.fromARGB(167, 0, 0, 0)),
-              textAlign: TextAlign.center,
+          Container(
+            width: 55,
+            height: 55,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.08),
+                  blurRadius: 10,
+                  offset: const Offset(0, 5),
+                )
+              ],
+            ),
+            child: Center(child: icon),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            titleSub,
+            style: const TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w500,
             ),
           )
         ],
