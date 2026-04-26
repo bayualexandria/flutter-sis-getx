@@ -47,7 +47,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  int _current = 0;
+  final int _current = 0;
 
   final CarouselSliderController _controller = CarouselSliderController();
   final userController = Get.put(UserController());
@@ -63,6 +63,7 @@ class _HomeState extends State<Home> {
     userFuture = userController.user();
   }
 
+  @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Container(
@@ -259,12 +260,14 @@ class _HomeState extends State<Home> {
                 height: size.height * 0.01,
               ),
               Container(
+                width: double.infinity,
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
                     color: Colors.white),
                 child: Column(
+
                   children: [
                     Wrap(
                       spacing: 20,
