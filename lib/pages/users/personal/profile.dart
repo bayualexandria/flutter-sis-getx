@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -22,6 +21,7 @@ class _PersonalState extends State<Personal> {
   final nama = TextEditingController();
   final noHp = TextEditingController();
   final alamat = TextEditingController();
+  bool _loaded = false;
 
   XFile? imageFile;
 
@@ -41,7 +41,7 @@ class _PersonalState extends State<Personal> {
                 child: ElevatedButton(
                   onPressed: () {
                     userController.updateUser(
-                        nohp: noHp, nama: nama, alamat: alamat);
+                        noHp: noHp, nama: nama, alamat: alamat);
                   },
                   style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
@@ -77,15 +77,16 @@ class _PersonalState extends State<Personal> {
                       future: userController.getUser(),
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
-                          nis.text = snapshot.data['siswa']['nis'];
-                          nama.text = snapshot.data['siswa']['nama'];
-                          noHp.text = snapshot.data['siswa']['no_hp'];
-                          alamat.text = snapshot.data['siswa']['alamat'];
+                          if (!_loaded) {
+                            nis.text = snapshot.data['nis'];
+                            nama.text = snapshot.data['name'];
+                            noHp.text = snapshot.data['no_hp'];
+                            alamat.text = snapshot.data['alamat'];
 
-                          final String jns =
-                              snapshot.data['siswa']['jenis_kelamin'];
-                          final imageUrl =
-                              snapshot.data['siswa']['image_profile'];
+                            _loaded = true;
+                          }
+                          final imageUrl = snapshot.data['image_profile'];
+                          final String jns = snapshot.data['jenis_kelamin'];
                           return Container(
                             padding: const EdgeInsets.symmetric(
                                 vertical: 30, horizontal: 15),
@@ -204,8 +205,7 @@ class _PersonalState extends State<Personal> {
                                             MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
-                                            snapshot.data['siswa']
-                                                ['jenis_kelamin'],
+                                            snapshot.data['jenis_kelamin'],
                                             style: const TextStyle(
                                                 color: Colors.black,
                                                 fontSize: 16,
@@ -233,7 +233,7 @@ class _PersonalState extends State<Personal> {
                                     ),
                                     controller: noHp,
                                     onChanged: (value) => value != noHp,
-                                    keyboardType: TextInputType.text,
+                                    keyboardType: TextInputType.number,
                                     decoration: const InputDecoration(
                                       label: Text(
                                         "No Handphone",

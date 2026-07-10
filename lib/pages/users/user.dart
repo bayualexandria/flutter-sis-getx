@@ -42,50 +42,55 @@ class _ProfileState extends State<Profile> {
               end: Alignment.bottomRight,
             ),
           ),
-          child: FutureBuilder(
-            future: userController.user(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                final imageUrl = snapshot.data['siswa']['image_profile'];
+          child: Column(
+            children: [
+              FutureBuilder(
+                future: userController.user(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    final imageUrl = snapshot.data['image_profile'];
 
-                return Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 35,
-                      backgroundColor: Colors.white,
-                      child: CircleAvatar(
-                        radius: 32,
-                        backgroundImage: NetworkImage(
-                          imageUrl != null
-                              ? '$repositori$imageUrl'
-                              : 'https://kemahasiswaan.umpp.ac.id/upload/default.png',
+                    return Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 41,
+                          backgroundColor:
+                              const Color.fromARGB(255, 255, 11, 243),
+                          child: CircleAvatar(
+                            backgroundImage: NetworkImage(
+                              imageUrl != null
+                                  ? '$repositori$imageUrl'
+                                  : 'https://kemahasiswaan.umpp.ac.id/upload/default.png',
+                            ),
+                            radius: 40,
+                          ),
                         ),
-                      ),
-                    ),
-                    const SizedBox(width: 15),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            snapshot.data['siswa']['nama'],
-                            style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18),
+                        const SizedBox(width: 15),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                snapshot.data['name'],
+                                style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18),
+                              ),
+                              Text(
+                                snapshot.data['email'],
+                                style: const TextStyle(color: Colors.white70),
+                              ),
+                            ],
                           ),
-                          Text(
-                            snapshot.data['email'],
-                            style: const TextStyle(color: Colors.white70),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                );
-              }
-              return const SizedBox();
-            },
+                        ),
+                      ],
+                    );
+                  }
+                  return const SizedBox();
+                },
+              ),
+            ],
           ),
         ),
         Padding(

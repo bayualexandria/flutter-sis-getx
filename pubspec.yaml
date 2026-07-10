@@ -38,6 +38,9 @@ dependencies:
   flutter_cache_manager: ^3.4.1
   flutter_launcher_icons: ^0.14.2
   flutter_secure_storage: ^9.2.2
+  dio_cookie_manager: ^3.4.0
+  cookie_jar: ^4.0.9
+  path_provider: ^2.1.5
   get: ^4.6.6
   google_sign_in: ^6.3.0
   heroicons: ^0.11.0

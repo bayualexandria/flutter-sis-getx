@@ -1,4 +1,4 @@
 class APIEndPoints {
-  String baseUrl = 'http://10.10.88.5:8000/api';
-  String baseUrlImage = 'http://10.10.88.5:8000/storage/';
+  String baseUrl = 'http://192.168.1.4:8080/api';
+  String baseUrlImage = 'http://192.168.1.4:8080';
 }

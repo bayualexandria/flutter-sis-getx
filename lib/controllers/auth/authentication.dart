@@ -1,10 +1,13 @@
 import 'dart:async';
+import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
+import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:sis/pages/intro.dart';
 import '../../pages/auth/login_page.dart';
 import '../../pages/home.dart';
@@ -14,11 +17,20 @@ class Authentication extends GetxController {
   TextEditingController username = TextEditingController();
   TextEditingController password = TextEditingController();
   FlutterSecureStorage storage = const FlutterSecureStorage();
-  Dio dio = Dio();
+
   final repositori = APIEndPoints().baseUrl;
   static final _googleSignIn = GoogleSignIn();
 
   Future<void> loginEndPoint() async {
+    final dio = Dio();
+
+    final cookieJar = PersistCookieJar(
+      storage: FileStorage((await getApplicationDocumentsDirectory()).path),
+    );
+
+    dio.interceptors.add(
+      CookieManager(cookieJar),
+    );
     Map body = {'username': username.text, 'password': password.text};
     try {
       final response = await dio.post('$repositori/auth/login',
@@ -36,9 +48,7 @@ class Authentication extends GetxController {
         final username = messages['username'] ?? '';
         final password = messages['password'] ?? '';
 
-        Get.snackbar(
-          'message',
-          '$username \n$password',
+        Get.snackbar('message', '$username \n$password',
             snackPosition: SnackPosition.TOP,
             backgroundColor: const Color.fromARGB(255, 255, 193, 193),
             borderRadius: 12,
@@ -70,9 +80,9 @@ class Authentication extends GetxController {
             ],
             titleText: const Text(
               'Pesan Error',
-              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-            )
-        );
+              style:
+                  TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+            ));
         return response.data['message'];
       }
       if (response.data['status'] == 403) {
@@ -108,13 +118,17 @@ class Authentication extends GetxController {
             ],
             titleText: const Text(
               'Pesan Error',
-              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+              style:
+                  TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
             ));
         return response.data['message'];
       }
-      await storage.write(key: 'token', value: response.data['accessToken']);
-      await storage.write(
-          key: 'username', value: response.data['user']['username']);
+      // Tanpa HTTP Only
+      // await storage.write(key: 'token', value: response.data['accessToken']);
+      // await storage.write(key: 'username', value: response.data['user']['username']);
+      // Menggunakan HTTP Only
+      await storage.write(key: 'token', value: "logged_in");
+      await storage.write(key: 'username', value: username.text);
       Get.off(const HomePage());
       return response.data;
     } on DioException catch (e) {
@@ -139,6 +153,7 @@ class Authentication extends GetxController {
               style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
             ));
       }
+      print(e);
       final errors = e.response?.statusCode;
 
       Get.snackbar('message', "Link URL API tidak valid!",
@@ -204,13 +219,21 @@ class Authentication extends GetxController {
   }
 
   Future<bool> logout() async {
+    final dio = Dio();
+
+    final cookieJar = PersistCookieJar(
+      storage: FileStorage((await getApplicationDocumentsDirectory()).path),
+    );
+
+    dio.interceptors.add(
+      CookieManager(cookieJar),
+    );
     final token = await storage.read(key: 'token');
     await dio.get('$repositori/logout',
         options: Options(
             headers: {
               'Content-Type': 'application/json',
               'Accept': 'application/json',
-              'Authorization': 'Bearer $token',
             },
             followRedirects: false,
             validateStatus: (status) {
@@ -224,6 +247,15 @@ class Authentication extends GetxController {
   }
 
   Future loginGoogle() async {
+    final dio = Dio();
+
+    final cookieJar = PersistCookieJar(
+      storage: FileStorage((await getApplicationDocumentsDirectory()).path),
+    );
+
+    dio.interceptors.add(
+      CookieManager(cookieJar),
+    );
     final user = await _googleSignIn.signIn();
     final id = user?.id;
     final name = user?.displayName;
@@ -241,7 +273,8 @@ class Authentication extends GetxController {
                   validateStatus: (status) {
                     return status! < 500;
                   }));
-
+      print('pesan response');
+      print(response.data['user']['username']);
       if (response.data['status'] == 403) {
         await _googleSignIn.signOut();
 
@@ -255,7 +288,7 @@ class Authentication extends GetxController {
             ));
         return response.data['message'];
       }
-      await storage.write(key: 'token', value: response.data['accessToken']);
+      await storage.write(key: 'token', value: "logged_in");
       await storage.write(
           key: 'username', value: response.data['user']['username']);
 
@@ -284,7 +317,7 @@ class Authentication extends GetxController {
               style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
             ));
       }
-      throw Exception(e.toString());
+      print(e);
     }
   }
 }

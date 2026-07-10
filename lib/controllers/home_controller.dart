@@ -11,7 +11,7 @@ class HomeController extends GetxController {
 
   Future profileSchool() async {
     try {
-      final response = await dio.get('$repositori/sekolah',
+      final response = await dio.get('$repositori/profile-sekolah',
           options: Options(
               headers: {
                 'Content-Type': 'application/json',
@@ -21,6 +21,8 @@ class HomeController extends GetxController {
               validateStatus: (status) {
                 return status! < 500;
               }));
+      print('ini response profile school:');
+      print(response);
       if (response.data['data'] != null) {
         return response.data['data'];
       } else {

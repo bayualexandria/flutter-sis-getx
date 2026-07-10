@@ -115,7 +115,7 @@ class _HomeState extends State<Home> {
                             builder: (context, snapshot) {
                               if (snapshot.hasData) {
                                 return Text(
-                                  snapshot.data['siswa']['nama'],
+                                  snapshot.data['name'],
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 18,

@@ -1,9 +1,12 @@
+import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
+import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 
 import 'package:heroicons/heroicons.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:sis/pages/auth/login_page.dart';
 
 import 'package:sis/pages/users/personal/profile.dart';
@@ -19,12 +22,21 @@ class UserController extends GetxController {
   late String? jenisKelamin;
   FlutterSecureStorage storage = const FlutterSecureStorage();
   static final _googleSignIn = GoogleSignIn();
-  Dio dio = Dio();
+
   final repositori = APIEndPoints().baseUrl;
   Authentication authentication = Authentication();
   XFile? imageFile;
 
   Future user() async {
+    final dio = Dio();
+
+    final cookieJar = PersistCookieJar(
+      storage: FileStorage((await getApplicationDocumentsDirectory()).path),
+    );
+
+    dio.interceptors.add(
+      CookieManager(cookieJar),
+    );
     final token = await storage.read(key: 'token');
     final noInduk = await storage.read(key: 'username');
     try {
@@ -76,6 +88,15 @@ class UserController extends GetxController {
   }
 
   Future getUser() async {
+    final dio = Dio();
+
+    final cookieJar = PersistCookieJar(
+      storage: FileStorage((await getApplicationDocumentsDirectory()).path),
+    );
+
+    dio.interceptors.add(
+      CookieManager(cookieJar),
+    );
     final token = await storage.read(key: 'token');
     final noInduk = await storage.read(key: 'username');
     final response = await dio.get('$repositori/user/$noInduk/siswa',
@@ -95,25 +116,36 @@ class UserController extends GetxController {
 
   Future<void> updateUser(
       {required TextEditingController nama,
-      required TextEditingController nohp,
+      required TextEditingController noHp,
       required TextEditingController alamat}) async {
     final token = await storage.read(key: 'token');
     final noInduk = await storage.read(key: 'username');
+    final dio = Dio();
 
-    Map body = {'nama': nama.text, 'no_hp': nohp.text, 'alamat': alamat.text};
+    final cookieJar = PersistCookieJar(
+      storage: FileStorage((await getApplicationDocumentsDirectory()).path),
+    );
+
+    dio.interceptors.add(
+      CookieManager(cookieJar),
+    );
+
+    Map body = {'nama': nama.text, 'no_hp': noHp.text, 'alamat': alamat.text};
+    print('ini body update user:');
+    print(body);
     try {
-      final response = await dio.post('$repositori/siswa/$noInduk',
+      final response = await dio.patch('$repositori/siswa/$noInduk',
           data: body,
           options: Options(
               followRedirects: false,
               headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
-                'Authorization': 'Bearer $token',
               },
               validateStatus: (status) {
                 return status! < 500;
               }));
+      print(response.data);
 
       Get.off(const Personal());
       Get.snackbar('message', response.data['message'],
@@ -156,6 +188,15 @@ class UserController extends GetxController {
   }
 
   Future<void> genderUser() async {
+    final dio = Dio();
+
+    final cookieJar = PersistCookieJar(
+      storage: FileStorage((await getApplicationDocumentsDirectory()).path),
+    );
+
+    dio.interceptors.add(
+      CookieManager(cookieJar),
+    );
     final token = await storage.read(key: 'token');
     final noInduk = await storage.read(key: 'username');
     Map body = {
@@ -217,6 +258,15 @@ class UserController extends GetxController {
 
   // Change Email
   Future<void> changeEmail({required TextEditingController email}) async {
+    final dio = Dio();
+
+    final cookieJar = PersistCookieJar(
+      storage: FileStorage((await getApplicationDocumentsDirectory()).path),
+    );
+
+    dio.interceptors.add(
+      CookieManager(cookieJar),
+    );
     final token = await storage.read(key: 'token');
     final noInduk = await storage.read(key: 'username');
 
@@ -302,6 +352,15 @@ class UserController extends GetxController {
 
   // Change Password
   Future<void> changePassword({required TextEditingController password}) async {
+    final dio = Dio();
+
+    final cookieJar = PersistCookieJar(
+      storage: FileStorage((await getApplicationDocumentsDirectory()).path),
+    );
+
+    dio.interceptors.add(
+      CookieManager(cookieJar),
+    );
     final token = await storage.read(key: 'token');
     final noInduk = await storage.read(key: 'username');
 
@@ -373,6 +432,15 @@ class UserController extends GetxController {
   }
 
   Future<void> updateImageProfile() async {
+    final dio = Dio();
+
+    final cookieJar = PersistCookieJar(
+      storage: FileStorage((await getApplicationDocumentsDirectory()).path),
+    );
+
+    dio.interceptors.add(
+      CookieManager(cookieJar),
+    );
     final token = await storage.read(key: 'token');
     final noInduk = await storage.read(key: 'username');
     final formData = dio_form_data.FormData.fromMap({
@@ -389,7 +457,6 @@ class UserController extends GetxController {
               headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
-                'Authorization': 'Bearer $token',
               },
               validateStatus: (status) {
                 return status! < 500;
