@@ -220,6 +220,7 @@ class Authentication extends GetxController {
 
   Future<bool> logout() async {
     final dio = Dio();
+    final noInduk = await storage.read(key: 'username');
 
     final cookieJar = PersistCookieJar(
       storage: FileStorage((await getApplicationDocumentsDirectory()).path),
@@ -229,7 +230,7 @@ class Authentication extends GetxController {
       CookieManager(cookieJar),
     );
     final token = await storage.read(key: 'token');
-    await dio.get('$repositori/logout',
+    await dio.post('$repositori/logout/$noInduk',
         options: Options(
             headers: {
               'Content-Type': 'application/json',
@@ -273,8 +274,6 @@ class Authentication extends GetxController {
                   validateStatus: (status) {
                     return status! < 500;
                   }));
-      print('pesan response');
-      print(response.data['user']['username']);
       if (response.data['status'] == 403) {
         await _googleSignIn.signOut();
 

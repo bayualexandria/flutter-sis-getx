@@ -51,7 +51,7 @@ class UserController extends GetxController {
               validateStatus: (status) {
                 return status! < 500;
               }));
-      print(response.data);
+      print(response);
       if (response.data['data'] != null) {
         return response.data['data'];
       }
@@ -61,6 +61,8 @@ class UserController extends GetxController {
         return null;
       }
     } on DioException catch (e) {
+      print('ini error user controller:');
+      print(e);
       if (e.response?.data['message'] == "Service Unavailable") {
         Get.snackbar('message', "Server Down! Sistem API dalam perbaikan.",
             snackPosition: SnackPosition.BOTTOM,
@@ -82,7 +84,6 @@ class UserController extends GetxController {
               style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
             ));
       }
-      throw Exception(e.toString());
     }
     return null;
   }
@@ -197,20 +198,21 @@ class UserController extends GetxController {
     dio.interceptors.add(
       CookieManager(cookieJar),
     );
-    final token = await storage.read(key: 'token');
     final noInduk = await storage.read(key: 'username');
     Map body = {
       'jenis_kelamin': jenisKelamin,
     };
+    print('ini body update user gender:');
+    print(body);
     try {
-      final response = await dio.post('$repositori/siswa/$noInduk',
+      final response = await dio.patch('$repositori/siswa/$noInduk',
           data: body,
           options: Options(
               followRedirects: false,
               headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
-                'Authorization': 'Bearer $token',
+              
               },
               validateStatus: (status) {
                 return status! < 500;
@@ -441,7 +443,7 @@ class UserController extends GetxController {
     dio.interceptors.add(
       CookieManager(cookieJar),
     );
-    final token = await storage.read(key: 'token');
+
     final noInduk = await storage.read(key: 'username');
     final formData = dio_form_data.FormData.fromMap({
       'image_profile': await dio_multipart_file.MultipartFile.fromFile(
@@ -450,7 +452,7 @@ class UserController extends GetxController {
     });
 
     try {
-      final response = await dio.post('$repositori/siswa/$noInduk',
+      final response = await dio.patch('$repositori/siswa/$noInduk',
           data: formData,
           options: Options(
               followRedirects: false,
